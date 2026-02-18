@@ -2,29 +2,28 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - AI Scan</title>
+    <title>Admin - Image Upload</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen p-4 pb-24">
+<body class="bg-slate-900 text-slate-100 min-h-screen p-4 pb-24 font-sans">
     <div class="max-w-md mx-auto">
         <header class="flex justify-between items-center mb-6 py-4 border-b border-slate-800">
             <h1 class="text-xl font-black text-pink-500 uppercase tracking-widest">Master Admin</h1>
-            <div id="sync-status" class="text-[9px] px-2 py-1 bg-slate-800 text-slate-500 rounded-full font-bold uppercase tracking-tighter">Ready</div>
         </header>
 
-        <section class="bg-slate-800 rounded-3xl p-6 mb-6 shadow-2xl border border-slate-700">
+        <section class="bg-slate-800 rounded-3xl p-6 mb-8 shadow-2xl border border-slate-700">
+            <h2 class="text-xs font-bold text-slate-400 mb-4 uppercase">アイテム登録</h2>
             <div class="space-y-4">
                 <input id="c-circle" type="text" placeholder="サークル名" class="w-full bg-slate-700 border-none p-4 rounded-2xl text-sm">
                 <input id="c-item" type="text" placeholder="アイテム名" class="w-full bg-slate-700 border-none p-4 rounded-2xl text-sm">
                 <input id="c-price" type="number" placeholder="価格" class="w-full bg-slate-700 border-none p-4 rounded-2xl text-sm">
-                <button onclick="addToCatalog()" class="w-full bg-pink-600 font-black py-4 rounded-2xl shadow-xl shadow-pink-900/20 active:scale-95 transition-all">追加・更新</button>
-            </div>
+                
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase ml-1">お品書き画像 (任意)</label>
+                    <input id="c-image" type="file" accept="image/*" class="block w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-slate-700 file:text-slate-300 hover:file:bg-slate-600">
+                </div>
 
-            <div class="mt-8 pt-6 border-t border-slate-700">
-                <p class="text-[10px] font-black text-pink-400 uppercase tracking-widest mb-3">AI Image Scan</p>
-                <input id="ai-image" type="file" accept="image/*" class="hidden" onchange="handleAiScan(this)">
-                <label for="ai-image" class="block w-full bg-slate-700 hover:bg-slate-600 text-center py-4 rounded-2xl cursor-pointer text-xs font-bold transition-all">お品書き画像をアップロード</label>
-                <div id="ai-loading" class="hidden mt-3 text-center text-[10px] text-pink-500 animate-pulse font-bold">AI ANALYZING...</div>
+                <button onclick="addToCatalog()" class="w-full bg-pink-600 font-black py-4 rounded-2xl shadow-xl active:scale-95 transition-all text-sm">カタログに追加</button>
             </div>
         </section>
 
@@ -33,96 +32,75 @@
 
     <script>
         let catalog = [];
-        async function api(method='GET', type='catalog', data=null) {
+
+        // 画像圧縮処理
+        async function compressImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width, height = img.height;
+                        const MAX = 400; // 横幅400pxに制限して軽量化
+                        if (width > MAX) { height *= MAX / width; width = MAX; }
+                        canvas.width = width; canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.6)); // 画質60%で圧縮
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function api(method='GET', data=null) {
             const pass = localStorage.getItem('vggc_admin_pass');
-            const res = await fetch(`/api/manage?type=${type}`, {
+            const res = await fetch(`/api/manage?type=catalog`, {
                 method, headers: {'Content-Type': 'application/json', 'x-admin-password': pass || ''},
                 body: data ? JSON.stringify(data) : null
             });
             if (res.status === 403) {
-                const p = prompt("Password:"); if(p) { localStorage.setItem('vggc_admin_pass', p); return api(method, type, data); }
+                const p = prompt("Password:"); if(p) { localStorage.setItem('vggc_admin_pass', p); return api(method, data); }
             }
             return res.json();
         }
 
         async function init() { catalog = await api('GET'); render(); }
-        function render() {
-            const el = document.getElementById('catalog-list');
-            el.innerHTML = catalog.map(i => `<div class="bg-slate-800 p-4 rounded-2xl border border-slate-700 flex justify-between items-center"><div><div class="text-[9px] font-black text-pink-500 uppercase">${i.circle}</div><div class="font-bold">${i.item}</div><div class="text-xs font-medium text-slate-500">¥${i.price.toLocaleString()}</div></div><button onclick="deleteItem(${i.id})" class="text-slate-600 hover:text-red-500 p-2">🗑️</button></div>`).reverse().join('');
-        }
 
         async function addToCatalog() {
             const circle = document.getElementById('c-circle').value, item = document.getElementById('c-item').value, price = parseInt(document.getElementById('c-price').value)||0;
-            if(!circle||!item) return alert("入力エラー");
-            catalog.push({id: Date.now(), circle, item, price});
-            await api('POST', 'catalog', catalog); render();
+            const imageFile = document.getElementById('c-image').files[0];
+            if(!item) return alert("商品名を入力してください");
+
+            let imageData = null;
+            if (imageFile) imageData = await compressImage(imageFile);
+
+            catalog.push({id: Date.now(), circle, item, price, image: imageData});
+            await api('POST', catalog);
+            document.getElementById('c-item').value = '';
+            document.getElementById('c-price').value = '';
+            document.getElementById('c-image').value = '';
+            render();
         }
 
-        async function deleteItem(id) { if(confirm("削除？")) { catalog = catalog.filter(i => i.id !== id); await api('POST', 'catalog', catalog); render(); } }
+        async function deleteItem(id) { if(confirm("削除しますか？")) { catalog = catalog.filter(i => i.id !== id); await api('POST', catalog); render(); } }
 
-       async function handleAiScan(input) {
-    if (!input.files[0]) return;
-    const loading = document.getElementById('ai-loading');
-    loading.classList.remove('hidden');
-
-    try {
-        // 1. 画像を圧縮する
-        const compressedBase64 = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    let width = img.width;
-                    let height = img.height;
-
-                    // 最大横幅を1000pxに制限してリサイズ
-                    const MAX_WIDTH = 1000;
-                    if (width > MAX_WIDTH) {
-                        height *= MAX_WIDTH / width;
-                        width = MAX_WIDTH;
-                    }
-                    canvas.width = width;
-                    canvas.height = height;
-
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-                    
-                    // 画質を0.7(70%)に落としてBase64化（これでサイズが激減します）
-                    resolve(canvas.toDataURL('image/jpeg', 0.7).split(',')[1]);
-                };
-                img.src = e.target.result;
-            };
-            reader.onerror = reject;
-            reader.readAsDataURL(input.files[0]);
-        });
-
-        // 2. 圧縮したデータをAPIに送る
-        const res = await api('POST', 'dify', { image: compressedBase64 });
-
-        if (!res || !res.answer) {
-            throw new Error("AIから応答がありませんでした。Difyのログを確認してください。");
+        function render() {
+            const el = document.getElementById('catalog-list');
+            el.innerHTML = catalog.map(i => `
+                <div class="bg-slate-800 p-3 rounded-2xl border border-slate-700 flex items-center gap-3">
+                    ${i.image ? `<img src="${i.image}" class="w-12 h-12 object-cover rounded-lg bg-slate-700">` : `<div class="w-12 h-12 bg-slate-700 rounded-lg flex items-center justify-center text-[10px] text-slate-500">No Img</div>`}
+                    <div class="flex-1 min-w-0">
+                        <div class="text-[9px] font-black text-pink-500 uppercase truncate">${i.circle || 'FREE'}</div>
+                        <div class="font-bold text-sm text-slate-100 truncate">${i.item}</div>
+                        <div class="text-xs text-slate-400">¥${i.price.toLocaleString()}</div>
+                    </div>
+                    <button onclick="deleteItem(${i.id})" class="text-slate-600 hover:text-red-500 p-2 text-xl">×</button>
+                </div>
+            `).reverse().join('');
         }
-
-        const jsonMatch = res.answer.match(/\[.*\]/s);
-        if (!jsonMatch) {
-            throw new Error("AIが正しい形式で回答しませんでした。");
-        }
-
-        const json = JSON.parse(jsonMatch[0]);
-        catalog = [...catalog, ...json.map(i => ({ ...i, id: Date.now() + Math.random() }))];
-        await api('POST', 'catalog', catalog);
-        render();
-        alert(`${json.length}件のアイテムを読み込みました！`);
-
-    } catch (e) {
-        console.error("詳細エラー:", e);
-        alert(`スキャン失敗: ${e.message}`);
-    } finally {
-        loading.classList.add('hidden');
-        input.value = '';
-    }
-}
         init();
     </script>
 </body>
