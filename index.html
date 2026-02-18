@@ -3,103 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vspo! Multi-User Organizer</title>
+    <title>Vspo! Goods Organizer</title>
     <style>
-        :root { --vspo-pink: #ff69b4; --vspo-blue: #00bfff; }
-        body { font-family: sans-serif; background: #f0f2f5; margin: 0; padding: 20px 20px 120px 20px; }
-        
-        /* ID管理ヘッダー */
-        .user-session {
-            background: #333; color: white; padding: 10px 20px;
-            display: flex; justify-content: space-between; align-items: center;
-            border-radius: 8px; margin-bottom: 20px;
+        :root {
+            --vspo-pink: #ff69b4;
+            --vspo-blue: #00bfff;
+            --bg-color: #f0f2f5;
         }
-        .user-id-display { font-weight: bold; color: var(--vspo-pink); }
 
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px 20px 120px 20px;
+        }
+
+        /* ユーザーIDエリア */
+        .header-bar {
+            max-width: 1100px;
+            margin: 0 auto 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+        }
+
+        .user-id { color: var(--vspo-pink); font-weight: bold; }
+
+        /* コントロールエリア */
         .controls {
-            max-width: 1100px; margin: 0 auto 20px;
-            display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px;
+            max-width: 1100px;
+            margin: 0 auto 30px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 15px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
-        @media (max-width: 600px) { .controls { grid-template-columns: 1fr; } }
 
-        .item-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
-        
+        @media (max-width: 768px) { .controls { grid-template-columns: 1fr; } }
+
+        input, select, button {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        button { background: var(--vspo-pink); color: white; border: none; cursor: pointer; }
+        button:hover { opacity: 0.9; }
+
+        /* グリッドレイアウト */
+        .item-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* カードデザイン */
         .item-card {
-            background: white; border-radius: 12px; padding: 15px; position: relative;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05); cursor: pointer; border: 2px solid transparent;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
         }
-        .item-card.selected { border-color: var(--vspo-pink); background: #fff9fc; }
-        
-        .circle-num { font-size: 0.8rem; background: #eee; padding: 2px 6px; border-radius: 4px; }
-        .item-price { color: var(--vspo-pink); font-weight: bold; font-size: 1.2rem; margin-top: 10px; }
 
-        .total-bar {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: white; border-top: 2px solid var(--vspo-pink);
-            padding: 15px; display: flex; justify-content: center; gap: 20px; align-items: center;
-            z-index: 100; box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+        .item-card.selected {
+            border-color: var(--vspo-pink);
+            background-color: #fff9fc;
         }
+
+        .item-card:hover { transform: translateY(-3px); }
+
+        .circle-info { font-size: 0.8rem; color: #888; margin-bottom: 5px; }
+        .item-num { font-weight: bold; background: #eee; padding: 2px 6px; border-radius: 4px; color: #444; }
+        .item-name { font-size: 1rem; font-weight: bold; margin: 10px 0; height: 2.5em; overflow: hidden; }
+        .item-price { color: var(--vspo-pink); font-size: 1.2rem; font-weight: bold; }
+
+        /* 合計金額バー（固定表示） */
+        .total-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+            padding: 15px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            z-index: 1000;
+        }
+
+        .total-info { font-size: 1.1rem; font-weight: bold; }
+        .total-price { font-size: 1.8rem; color: var(--vspo-pink); margin-left: 10px; }
+
+        .btn-copy { background: #666; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
-<div class="user-session" id="user-area">
-    <div>👤 User: <span id="display-user-id" class="user-id-display">未設定</span></div>
-    <button onclick="changeUser()" style="cursor:pointer">ID切替</button>
+<div class="header-bar">
+    <div>👤 ID: <span id="display-user-id" class="user-id">読み込み中...</span></div>
+    <div>
+        <button class="btn-copy" onclick="copyShareUrl()">共有URLをコピー</button>
+        <button onclick="changeUser()">ID切替</button>
+    </div>
 </div>
 
 <div class="controls">
-    <input type="text" id="search-input" placeholder="検索...">
-    <select id="type-filter"><option value="">すべて</option></select>
+    <input type="text" id="search-input" placeholder="検索 (サークル名・グッズ・番号)...">
+    <select id="type-filter"><option value="">すべての種別</option></select>
     <select id="sort-order">
-        <option value="num-asc">サークル番号順</option>
-        <option value="price-asc">安い順</option>
-        <option value="price-desc">高い順</option>
+        <option value="num-asc">サークル番号順 (A-01...)</option>
+        <option value="price-asc">価格の安い順</option>
+        <option value="price-desc">価格の高い順</option>
     </select>
 </div>
 
 <div id="catalog-container" class="item-grid"></div>
 
 <div class="total-bar">
-    <b>合計: ¥<span id="total-amount">0</span></b>
-    <small>(<span id="item-count">0</span> 点)</small>
-    <button onclick="clearList()">リセット</button>
+    <div class="total-info">
+        選択: <span id="item-count">0</span> 点
+        <span class="total-price">合計 ¥<span id="total-amount">0</span></span>
+    </div>
+    <button style="background:#888" onclick="resetWishlist()">リセット</button>
 </div>
 
 <script>
     let catalogData = [];
-    let currentUserId = "guest";
+    let currentUserId = "";
     let wishlist = new Set();
 
-    // 初期化
     async function init() {
-        // 1. IDの確認
-        currentUserId = localStorage.getItem('vspo_last_user') || prompt("利用するIDを入力してください (例: ひなの推し)", "guest") || "guest";
-        localStorage.setItem('vspo_last_user', currentUserId);
+        // 1. ID管理 (URL優先 > LocalStorage > Prompt)
+        const urlParams = new URLSearchParams(window.location.search);
+        const idFromUrl = urlParams.get('id');
+        
+        if (idFromUrl) {
+            currentUserId = idFromUrl;
+            localStorage.setItem('vspo_last_user', currentUserId);
+        } else {
+            currentUserId = localStorage.getItem('vspo_last_user') || prompt("利用する個人IDを入力してください (例: hinano_fan)", "guest") || "guest";
+            localStorage.setItem('vspo_last_user', currentUserId);
+        }
         document.getElementById('display-user-id').textContent = currentUserId;
 
         // 2. データの取得
-        const res = await fetch('catalog.json');
-        catalogData = await res.json();
-        
-        // 3. ウィッシュリストの復元
-        loadWishlist();
-        
-        // 4. 種別フィルター作成
-        const types = [...new Set(catalogData.map(d => d.type))];
-        types.forEach(t => document.getElementById('type-filter').innerHTML += `<option value="${t}">${t}</option>`);
+        try {
+            const response = await fetch('catalog.json');
+            catalogData = await response.json();
+            
+            // 種別フィルター作成
+            const types = [...new Set(catalogData.map(item => item.type))];
+            const filter = document.getElementById('type-filter');
+            types.forEach(t => { if(t) filter.innerHTML += `<option value="${t}">${t}</option>`; });
 
-        applySort();
-        render();
+            loadWishlist();
+            applySort();
+            render();
+        } catch (e) {
+            document.getElementById('catalog-container').innerHTML = "catalog.json が見つかりません。GitHub Actionsの完了を待ってください。";
+        }
     }
 
-    // データの保存・読み込み
+    // ウィッシュリスト保存 (IDごとに鍵を分ける)
     function saveWishlist() {
         localStorage.setItem(`wishlist_${currentUserId}`, JSON.stringify(Array.from(wishlist)));
     }
+
     function loadWishlist() {
         const saved = localStorage.getItem(`wishlist_${currentUserId}`);
         wishlist = new Set(saved ? JSON.parse(saved) : []);
+    }
+
+    // 自然なソート (C-1, C-10などが正しく並ぶように)
+    function applySort() {
+        const order = document.getElementById('sort-order').value;
+        catalogData.sort((a, b) => {
+            if (order === "num-asc") {
+                return (a.num || "").localeCompare((b.num || ""), undefined, { numeric: true, sensitivity: 'base' });
+            } else if (order === "price-asc") {
+                return (a.price || 0) - (b.price || 0);
+            } else {
+                return (b.price || 0) - (a.price || 0);
+            }
+        });
     }
 
     function render() {
@@ -107,19 +210,21 @@
         const type = document.getElementById('type-filter').value;
         const container = document.getElementById('catalog-container');
 
-        const filtered = catalogData.filter(d => {
-            return (!type || d.type === type) && 
-                   (!search || d.item.toLowerCase().includes(search) || d.circle.toLowerCase().includes(search) || d.num.toLowerCase().includes(search));
+        const filtered = catalogData.filter(item => {
+            const matchesSearch = !search || item.circle?.toLowerCase().includes(search) || item.item?.toLowerCase().includes(search) || item.num?.toLowerCase().includes(search);
+            const matchesType = !type || item.type === type;
+            return matchesSearch && matchesType;
         });
 
-        container.innerHTML = filtered.map(d => {
-            const key = `${d.circle}_${d.item}`;
-            const selected = wishlist.has(key);
+        container.innerHTML = filtered.map(item => {
+            const key = `${item.circle}_${item.item}`;
+            const isSelected = wishlist.has(key);
             return `
-                <div class="item-card ${selected ? 'selected' : ''}" onclick="toggleItem('${key}')">
-                    <span class="circle-num">${d.num || '??'}</span> ${d.circle}
-                    <div style="margin: 8px 0; font-weight:bold">${d.item}</div>
-                    <div class="item-price">¥${(d.price || 0).toLocaleString()}</div>
+                <div class="item-card ${isSelected ? 'selected' : ''}" onclick="toggleWish('${key}')">
+                    <div class="circle-info"><span class="item-num">${item.num || '---'}</span> ${item.circle || '不明'}</div>
+                    <div style="font-size:0.7rem; color:var(--vspo-blue)">${item.type}</div>
+                    <div class="item-name">${item.item}</div>
+                    <div class="item-price">¥${(item.price || 0).toLocaleString()}</div>
                 </div>
             `;
         }).join('');
@@ -127,7 +232,7 @@
         updateTotal();
     }
 
-    function toggleItem(key) {
+    function toggleWish(key) {
         if (wishlist.has(key)) wishlist.delete(key);
         else wishlist.add(key);
         saveWishlist();
@@ -136,43 +241,41 @@
 
     function updateTotal() {
         let total = 0;
-        catalogData.forEach(d => {
-            if (wishlist.has(`${d.circle}_${d.item}`)) total += (d.price || 0);
+        catalogData.forEach(item => {
+            if (wishlist.has(`${item.circle}_${item.item}`)) total += (item.price || 0);
         });
         document.getElementById('total-amount').textContent = total.toLocaleString();
         document.getElementById('item-count').textContent = wishlist.size;
     }
 
-    function applySort() {
-        const order = document.getElementById('sort-order').value;
-        catalogData.sort((a, b) => {
-            if (order === 'num-asc') return (a.num || "").localeCompare(b.num || "", undefined, {numeric: true});
-            if (order === 'price-asc') return a.price - b.price;
-            return b.price - a.price;
-        });
-    }
-
     function changeUser() {
-        const newId = prompt("切り替えるIDを入力してください", currentUserId);
+        const newId = prompt("新しいIDを入力してください", currentUserId);
         if (newId) {
             localStorage.setItem('vspo_last_user', newId);
-            location.reload();
+            window.location.search = `?id=${encodeURIComponent(newId)}`;
         }
     }
 
-    function clearList() {
-        if (confirm("リストを空にしますか？")) {
+    function copyShareUrl() {
+        const url = `${window.location.origin}${window.location.pathname}?id=${encodeURIComponent(currentUserId)}`;
+        navigator.clipboard.writeText(url).then(() => alert("共有用URLをコピーしました！"));
+    }
+
+    function resetWishlist() {
+        if(confirm("リストをクリアしますか？")) {
             wishlist.clear();
             saveWishlist();
             render();
         }
     }
 
+    // リスナー設定
     document.getElementById('search-input').addEventListener('input', render);
     document.getElementById('type-filter').addEventListener('change', render);
     document.getElementById('sort-order').addEventListener('change', () => { applySort(); render(); });
 
     init();
 </script>
+
 </body>
 </html>
