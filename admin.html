@@ -2,10 +2,10 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Image Upload</title>
+    <title>Admin - Circuit Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen p-4 pb-24 font-sans">
+<body class="bg-slate-900 text-slate-100 min-h-screen p-4 pb-24">
     <div class="max-w-md mx-auto">
         <header class="flex justify-between items-center mb-6 py-4 border-b border-slate-800">
             <h1 class="text-xl font-black text-pink-500 uppercase tracking-widest">Master Admin</h1>
@@ -14,16 +14,17 @@
         <section class="bg-slate-800 rounded-3xl p-6 mb-8 shadow-2xl border border-slate-700">
             <h2 class="text-xs font-bold text-slate-400 mb-4 uppercase">アイテム登録</h2>
             <div class="space-y-4">
+                <input id="c-num" type="text" placeholder="配置番号 (例: A-01a, 東あ-12)" class="w-full bg-slate-700 border-none p-4 rounded-2xl text-sm placeholder-slate-500">
                 <input id="c-circle" type="text" placeholder="サークル名" class="w-full bg-slate-700 border-none p-4 rounded-2xl text-sm">
                 <input id="c-item" type="text" placeholder="アイテム名" class="w-full bg-slate-700 border-none p-4 rounded-2xl text-sm">
                 <input id="c-price" type="number" placeholder="価格" class="w-full bg-slate-700 border-none p-4 rounded-2xl text-sm">
                 
                 <div class="space-y-2">
-                    <label class="text-[10px] font-bold text-slate-500 uppercase ml-1">お品書き画像 (任意)</label>
-                    <input id="c-image" type="file" accept="image/*" class="block w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-slate-700 file:text-slate-300 hover:file:bg-slate-600">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase ml-1">画像</label>
+                    <input id="c-image" type="file" accept="image/*" class="block w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-slate-700 file:text-slate-300">
                 </div>
 
-                <button onclick="addToCatalog()" class="w-full bg-pink-600 font-black py-4 rounded-2xl shadow-xl active:scale-95 transition-all text-sm">カタログに追加</button>
+                <button onclick="addToCatalog()" class="w-full bg-pink-600 font-black py-4 rounded-2xl shadow-xl active:scale-95 transition-all text-sm">追加</button>
             </div>
         </section>
 
@@ -32,8 +33,6 @@
 
     <script>
         let catalog = [];
-
-        // 画像圧縮処理
         async function compressImage(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -41,13 +40,11 @@
                     const img = new Image();
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
-                        let width = img.width, height = img.height;
-                        const MAX = 400; // 横幅400pxに制限して軽量化
-                        if (width > MAX) { height *= MAX / width; width = MAX; }
-                        canvas.width = width; canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        resolve(canvas.toDataURL('image/jpeg', 0.6)); // 画質60%で圧縮
+                        let width = img.width, MAX = 400;
+                        if (width > MAX) { canvas.width = MAX; canvas.height = img.height * (MAX / img.width); }
+                        else { canvas.width = width; canvas.height = img.height; }
+                        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.6));
                     };
                     img.src = e.target.result;
                 };
@@ -70,36 +67,34 @@
         async function init() { catalog = await api('GET'); render(); }
 
         async function addToCatalog() {
-            const circle = document.getElementById('c-circle').value, item = document.getElementById('c-item').value, price = parseInt(document.getElementById('c-price').value)||0;
+            const num = document.getElementById('c-num').value, circle = document.getElementById('c-circle').value, 
+                  item = document.getElementById('c-item').value, price = parseInt(document.getElementById('c-price').value)||0;
             const imageFile = document.getElementById('c-image').files[0];
-            if(!item) return alert("商品名を入力してください");
+            if(!item) return;
 
-            let imageData = null;
-            if (imageFile) imageData = await compressImage(imageFile);
-
-            catalog.push({id: Date.now(), circle, item, price, image: imageData});
+            let imageData = imageFile ? await compressImage(imageFile) : null;
+            catalog.push({id: Date.now(), num, circle, item, price, image: imageData});
             await api('POST', catalog);
-            document.getElementById('c-item').value = '';
-            document.getElementById('c-price').value = '';
-            document.getElementById('c-image').value = '';
+            document.getElementById('c-item').value = ''; document.getElementById('c-price').value = ''; document.getElementById('c-image').value = '';
             render();
         }
 
-        async function deleteItem(id) { if(confirm("削除しますか？")) { catalog = catalog.filter(i => i.id !== id); await api('POST', catalog); render(); } }
+        async function deleteItem(id) { if(confirm("削除？")) { catalog = catalog.filter(i => i.id !== id); await api('POST', catalog); render(); } }
 
         function render() {
             const el = document.getElementById('catalog-list');
+            // 管理画面でも番号順に並べると見やすい
+            catalog.sort((a, b) => (a.num || '').localeCompare(b.num || '', 'ja', {numeric: true}));
             el.innerHTML = catalog.map(i => `
                 <div class="bg-slate-800 p-3 rounded-2xl border border-slate-700 flex items-center gap-3">
-                    ${i.image ? `<img src="${i.image}" class="w-12 h-12 object-cover rounded-lg bg-slate-700">` : `<div class="w-12 h-12 bg-slate-700 rounded-lg flex items-center justify-center text-[10px] text-slate-500">No Img</div>`}
+                    <div class="w-10 text-[10px] font-black text-pink-500 text-center bg-pink-500/10 py-1 rounded-md">${i.num || '--'}</div>
                     <div class="flex-1 min-w-0">
-                        <div class="text-[9px] font-black text-pink-500 uppercase truncate">${i.circle || 'FREE'}</div>
+                        <div class="text-[9px] font-bold text-slate-500 truncate uppercase">${i.circle}</div>
                         <div class="font-bold text-sm text-slate-100 truncate">${i.item}</div>
-                        <div class="text-xs text-slate-400">¥${i.price.toLocaleString()}</div>
                     </div>
-                    <button onclick="deleteItem(${i.id})" class="text-slate-600 hover:text-red-500 p-2 text-xl">×</button>
+                    <button onclick="deleteItem(${i.id})" class="text-slate-600 p-2">×</button>
                 </div>
-            `).reverse().join('');
+            `).join('');
         }
         init();
     </script>
