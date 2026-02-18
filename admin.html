@@ -2,122 +2,221 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Two-Step AI Scan</title>
+    <title>Admin - AI Smart Scan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .loading-pulse { animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen p-4 pb-24 font-sans">
     <div class="max-w-md mx-auto">
         <header class="flex justify-between items-center mb-6 py-4 border-b border-slate-800">
             <h1 class="text-xl font-black text-pink-500 uppercase tracking-widest">Master Admin</h1>
+            <div id="sync-status" class="text-[9px] px-2 py-1 bg-slate-800 text-slate-500 rounded-full font-bold uppercase">Online</div>
         </header>
 
         <section class="bg-slate-800 rounded-3xl p-6 mb-8 shadow-2xl border-2 border-pink-500/20">
-            <h2 class="text-[10px] font-black text-pink-500 uppercase tracking-widest mb-4">Step-by-Step AI Scan</h2>
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-[10px] font-black text-pink-500 uppercase tracking-widest">AI Auto Scan (OCR-First)</h2>
+                <span class="text-[8px] text-slate-500">2-Step Analysis</span>
+            </div>
             <div class="space-y-4">
                 <input id="ai-image" type="file" accept="image/*" class="hidden" onchange="handleAiScan(this)">
-                <label for="ai-image" class="block w-full bg-pink-600 hover:bg-pink-500 text-center py-5 rounded-2xl cursor-pointer font-black text-sm transition-all shadow-lg active:scale-95">
+                <label for="ai-image" class="block w-full bg-pink-600 hover:bg-pink-500 text-center py-5 rounded-2xl cursor-pointer font-black text-sm transition-all shadow-lg shadow-pink-900/40 active:scale-95">
                     お品書きをスキャン開始
                 </label>
-                <div id="ai-loading" class="hidden text-center text-[10px] text-pink-400 font-bold tracking-widest loading-pulse">
-                    1.文字起こし中... → 2.データ整形中...
+                <div id="ai-loading" class="hidden text-center text-[10px] text-pink-400 font-bold tracking-widest loading-pulse uppercase">
+                    Reading... ➜ Analyzing... ➜ Formatting...
                 </div>
             </div>
         </section>
 
+        <details class="mb-8 group">
+            <summary class="text-[10px] font-bold text-slate-500 cursor-pointer uppercase tracking-widest text-center group-open:mb-4 outline-none">
+                手動 / 一括テキスト登録を表示
+            </summary>
+            <div class="bg-slate-800/50 rounded-2xl p-5 border border-slate-700 space-y-4">
+                <div class="space-y-2">
+                    <p class="text-[9px] text-slate-500 px-1 italic font-bold">書式: 配置,サークル,種類,品名,価格</p>
+                    <textarea id="bulk-input" rows="3" placeholder="A-01a,サークル名,新刊,タイトル,500" 
+                        class="w-full bg-slate-700 border-none p-4 rounded-xl text-[10px] text-slate-100 placeholder-slate-600 focus:ring-2 focus:ring-pink-500 outline-none"></textarea>
+                </div>
+                <button onclick="addBulk()" class="w-full bg-slate-700 hover:bg-slate-600 py-3 rounded-xl text-[10px] font-bold uppercase transition-colors">
+                    テキストから追加
+                </button>
+            </div>
+        </details>
+
+        <div class="flex justify-between items-center mb-4 px-1">
+            <h2 class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Catalog List</h2>
+            <button onclick="clearAll()" class="text-[9px] text-red-900 hover:text-red-500 font-bold uppercase transition-colors">全削除</button>
+        </div>
         <div id="catalog-list" class="space-y-3"></div>
     </div>
 
     <script>
         let catalog = [];
 
-        async function api(method='GET', type='catalog', data=null) {
+        // API通信の共通処理
+        async function api(method = 'GET', type = 'catalog', data = null) {
             const pass = localStorage.getItem('vggc_admin_pass');
-            const res = await fetch(`/api/manage?type=${type}`, {
-                method, headers: {'Content-Type': 'application/json', 'x-admin-password': pass || ''},
-                body: data ? JSON.stringify(data) : null
-            });
-            if (res.status === 403) {
-                const p = prompt("Password:"); if(p) { localStorage.setItem('vggc_admin_pass', p); return api(method, type, data); }
+            try {
+                const res = await fetch(`/api/manage?type=${type}`, {
+                    method,
+                    headers: { 'Content-Type': 'application/json', 'x-admin-password': pass || '' },
+                    body: data ? JSON.stringify(data) : null
+                });
+
+                if (res.status === 403) {
+                    const p = prompt("管理者パスワードを入力:");
+                    if (p) {
+                        localStorage.setItem('vggc_admin_pass', p);
+                        return api(method, type, data);
+                    }
+                }
+                return res.json();
+            } catch (err) {
+                console.error(err);
+                return { error: true };
             }
-            return res.json();
         }
 
+        // 413エラー対策：画像をOCRに適したサイズに圧縮
+        async function compressImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_W = 1000; // 文字認識のため1000px程度は維持
+                        let w = img.width, h = img.height;
+                        if (w > MAX_W) { h *= MAX_W / w; w = MAX_W; }
+                        canvas.width = w; canvas.height = h;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, w, h);
+                        // 画質を0.5まで落としてデータ量を激減させる
+                        resolve(canvas.toDataURL('image/jpeg', 0.5).split(',')[1]);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // AIスキャン処理（2段階プロンプト対応）
         async function handleAiScan(input) {
             if (!input.files[0]) return;
             const loading = document.getElementById('ai-loading');
             loading.classList.remove('hidden');
 
             try {
-                // 文字認識のため、解像度を少し高め(1000px)に設定
-                const base64 = await new Promise(resolve => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        const img = new Image();
-                        img.onload = () => {
-                            const canvas = document.createElement('canvas');
-                            const MAX = 1000; let w = img.width, h = img.height;
-                            if (w > MAX) { h *= MAX / w; w = MAX; }
-                            canvas.width = w; canvas.height = h;
-                            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                            resolve(canvas.toDataURL('image/jpeg', 0.6).split(',')[1]);
-                        };
-                        img.src = e.target.result;
-                    };
-                    reader.readAsDataURL(input.files[0]);
-                });
-
+                const base64 = await compressImage(input.files[0]);
                 const res = await api('POST', 'dify', { image: base64 });
-                
-                // 【超重要】AIが「ステップ1のテキスト」を混ぜてきてもJSONだけを抜き出す正規表現
+
+                if (!res || !res.answer) throw new Error("AIから応答がありません");
+
+                // AIの回答からJSON配列部分を抽出（ステップ1の文字起こしを無視するため）
                 const jsonMatch = res.answer.match(/\[\s*\{.*\}\s*\]/s);
+                if (!jsonMatch) throw new Error("有効なデータが見つかりませんでした");
+
+                const rawItems = JSON.parse(jsonMatch[0]);
                 
-                if (jsonMatch) {
-                    const items = JSON.parse(jsonMatch[0]);
-                    const validated = items.map(i => ({
-                        id: Date.now() + Math.random(),
-                        num: i.num || '--',
-                        circle: i.circle || '不明',
-                        type: i.type || 'その他',
-                        item: i.item || '商品名不明',
-                        price: parseInt(i.price) || 0
-                    }));
-                    catalog = [...catalog, ...validated];
-                    await api('POST', catalog);
-                    render();
-                    alert(`${validated.length}件を正確に読み込みました！`);
-                } else {
-                    throw new Error("AIの回答に有効なデータが含まれていませんでした。");
-                }
+                // 【ガード】AIがサボっても undefined にならないよう補完
+                const validatedItems = rawItems.map(i => ({
+                    id: Date.now() + Math.random(),
+                    num: i.num || i.booth || '--', 
+                    circle: i.circle || '不明',
+                    type: i.type || 'その他',
+                    item: i.item || '商品名不明',
+                    price: parseInt(i.price) || 0
+                }));
+
+                catalog = [...catalog, ...validatedItems];
+                await api('POST', 'catalog', catalog);
+                render();
+                alert(`${validatedItems.length}件をスキャン完了！`);
             } catch (e) {
                 console.error(e);
-                alert("エラー: AIがデータを生成できませんでした。もう一度試してください。");
+                alert(`失敗: ${e.message}\n画像を切り抜くか、光の反射を抑えて撮り直してください。`);
             } finally {
                 loading.classList.add('hidden');
                 input.value = '';
             }
         }
 
-        async function init() { catalog = await api('GET'); render(); }
-        async function deleteItem(id) { if(confirm("削除？")) { catalog = catalog.filter(i => i.id !== id); await api('POST', catalog); render(); } }
+        // テキスト一括登録
+        async function addBulk() {
+            const text = document.getElementById('bulk-input').value.trim();
+            if (!text) return;
+            const newItems = text.split('\n').map(l => {
+                const [num, circle, type, item, price] = l.split(',').map(s => s.trim());
+                return { 
+                    id: Date.now() + Math.random(), 
+                    num: num || '--', 
+                    circle: circle || '不明', 
+                    type: type || 'その他', 
+                    item: item || '未入力', 
+                    price: parseInt(price) || 0 
+                };
+            });
+            catalog = [...catalog, ...newItems];
+            await api('POST', 'catalog', catalog);
+            document.getElementById('bulk-input').value = '';
+            render();
+        }
+
+        async function deleteItem(id) {
+            if (!confirm("削除しますか？")) return;
+            catalog = catalog.filter(i => i.id !== id);
+            await api('POST', 'catalog', catalog);
+            render();
+        }
+
+        async function clearAll() {
+            if (!confirm("お品書きを全消去しますか？")) return;
+            catalog = [];
+            await api('POST', 'catalog', catalog);
+            render();
+        }
 
         function render() {
             const el = document.getElementById('catalog-list');
-            catalog.sort((a, b) => (a.num || '').localeCompare(b.num || '', 'ja', {numeric: true}));
+            // 配置番号順にソート（東A27abのような番号も考慮）
+            catalog.sort((a, b) => (a.num || '').localeCompare(b.num || '', 'ja', { numeric: true }));
+            
+            if (catalog.length === 0) {
+                el.innerHTML = '<div class="text-center py-20 text-slate-700 text-[10px] font-bold uppercase tracking-widest">No Items</div>';
+                return;
+            }
+
             el.innerHTML = catalog.map(i => `
-                <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700 flex items-center gap-4">
-                    <div class="w-12 text-[9px] font-black text-pink-500 text-center bg-pink-500/10 py-2 rounded-lg uppercase">${i.num}</div>
-                    <div class="flex-1 min-w-0">
-                        <div class="text-[9px] font-bold text-slate-500 truncate uppercase mb-0.5">${i.circle} | ${i.type}</div>
-                        <div class="font-bold text-sm text-slate-100 truncate">${i.item}</div>
-                        <div class="text-[10px] font-black text-pink-400 mt-1">¥${i.price.toLocaleString()}</div>
+                <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700 flex items-center gap-4 transition-all hover:border-pink-500/30">
+                    <div class="w-12 text-[10px] font-black text-pink-500 text-center bg-pink-500/10 py-2 rounded-lg uppercase">
+                        ${i.num || '--'}
                     </div>
-                    <button onclick="deleteItem(${i.id})" class="text-slate-600 hover:text-red-500 p-2">×</button>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-[9px] font-bold text-slate-500 truncate uppercase mb-0.5">
+                            ${i.circle || '不明'} | ${i.type || 'その他'}
+                        </div>
+                        <div class="font-bold text-sm text-slate-100 truncate">${i.item || '品名不明'}</div>
+                        <div class="text-[10px] font-black text-pink-400 mt-1">¥${(i.price || 0).toLocaleString()}</div>
+                    </div>
+                    <button onclick="deleteItem(${i.id})" class="text-slate-600 hover:text-red-500 p-2 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    </button>
                 </div>
             `).join('');
+        }
+
+        async function init() {
+            const data = await api('GET');
+            if (data && !data.error) {
+                catalog = data;
+                render();
+            }
         }
         init();
     </script>
