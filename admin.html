@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Circuit Manager</title>
+    <title>Admin - Multi Register</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen p-4 pb-24">
@@ -11,47 +11,31 @@
             <h1 class="text-xl font-black text-pink-500 uppercase tracking-widest">Master Admin</h1>
         </header>
 
-        <section class="bg-slate-800 rounded-3xl p-6 mb-8 shadow-2xl border border-slate-700">
-            <h2 class="text-xs font-bold text-slate-400 mb-4 uppercase">アイテム登録</h2>
-            <div class="space-y-4">
-                <input id="c-num" type="text" placeholder="配置番号 (例: A-01a, 東あ-12)" class="w-full bg-slate-700 border-none p-4 rounded-2xl text-sm placeholder-slate-500">
-                <input id="c-circle" type="text" placeholder="サークル名" class="w-full bg-slate-700 border-none p-4 rounded-2xl text-sm">
-                <input id="c-item" type="text" placeholder="アイテム名" class="w-full bg-slate-700 border-none p-4 rounded-2xl text-sm">
-                <input id="c-price" type="number" placeholder="価格" class="w-full bg-slate-700 border-none p-4 rounded-2xl text-sm">
-                
-                <div class="space-y-2">
-                    <label class="text-[10px] font-bold text-slate-500 uppercase ml-1">画像</label>
-                    <input id="c-image" type="file" accept="image/*" class="block w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-slate-700 file:text-slate-300">
-                </div>
-
-                <button onclick="addToCatalog()" class="w-full bg-pink-600 font-black py-4 rounded-2xl shadow-xl active:scale-95 transition-all text-sm">追加</button>
-            </div>
+        <section class="bg-slate-800 rounded-3xl p-6 mb-6 shadow-2xl border border-slate-700">
+            <h2 class="text-[10px] font-black text-pink-400 uppercase tracking-widest mb-4">一括登録（高速）</h2>
+            <textarea id="bulk-input" rows="4" placeholder="A-01a,サークル名,アイテム名,価格&#10;A-01a,サークル名,アイテム名2,500" 
+                class="w-full bg-slate-700 border-none p-4 rounded-2xl text-xs text-slate-100 placeholder-slate-600 mb-3"></textarea>
+            <button onclick="addBulk()" class="w-full bg-slate-700 hover:bg-slate-600 font-bold py-3 rounded-2xl text-xs transition-all">一括追加</button>
         </section>
+
+        <details class="bg-slate-800/50 rounded-3xl border border-slate-700 mb-8 overflow-hidden">
+            <summary class="p-4 text-xs font-bold text-slate-400 cursor-pointer uppercase">1件ずつ登録（画像あり）</summary>
+            <div class="p-6 pt-0 space-y-4">
+                <input id="c-num" type="text" placeholder="配置番号" class="w-full bg-slate-700 border-none p-4 rounded-2xl text-sm">
+                <input id="c-circle" type="text" placeholder="サークル名" class="w-full bg-slate-700 border-none p-4 rounded-2xl text-sm">
+                <input id="c-item" type="text" placeholder="商品名" class="w-full bg-slate-700 border-none p-4 rounded-2xl text-sm">
+                <input id="c-price" type="number" placeholder="価格" class="w-full bg-slate-700 border-none p-4 rounded-2xl text-sm">
+                <input id="c-image" type="file" accept="image/*" class="w-full text-xs text-slate-500">
+                <button onclick="addToCatalog()" class="w-full bg-pink-600 font-black py-4 rounded-2xl active:scale-95 transition-all text-sm">カタログ追加</button>
+            </div>
+        </details>
 
         <div id="catalog-list" class="space-y-3"></div>
     </div>
 
     <script>
         let catalog = [];
-        async function compressImage(file) {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        let width = img.width, MAX = 400;
-                        if (width > MAX) { canvas.width = MAX; canvas.height = img.height * (MAX / img.width); }
-                        else { canvas.width = width; canvas.height = img.height; }
-                        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-                        resolve(canvas.toDataURL('image/jpeg', 0.6));
-                    };
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
+        // 通信関数 (前回同様)
         async function api(method='GET', data=null) {
             const pass = localStorage.getItem('vggc_admin_pass');
             const res = await fetch(`/api/manage?type=catalog`, {
@@ -64,18 +48,51 @@
             return res.json();
         }
 
+        // 画像圧縮 (前回同様)
+        async function compressImage(file) {
+            return new Promise(r => {
+                const rd = new FileReader();
+                rd.onload = e => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX = 400; let w = img.width, h = img.height;
+                        if(w > MAX){ h *= MAX/w; w = MAX; }
+                        canvas.width = w; canvas.height = h;
+                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                        r(canvas.toDataURL('image/jpeg', 0.6));
+                    };
+                    img.src = e.target.result;
+                };
+                rd.readAsDataURL(file);
+            });
+        }
+
         async function init() { catalog = await api('GET'); render(); }
 
-        async function addToCatalog() {
-            const num = document.getElementById('c-num').value, circle = document.getElementById('c-circle').value, 
-                  item = document.getElementById('c-item').value, price = parseInt(document.getElementById('c-price').value)||0;
-            const imageFile = document.getElementById('c-image').files[0];
-            if(!item) return;
+        // --- 【新機能】一括登録ロジック ---
+        async function addBulk() {
+            const text = document.getElementById('bulk-input').value.trim();
+            if(!text) return;
+            const lines = text.split('\n');
+            const newItems = lines.map(line => {
+                const [num, circle, item, price] = line.split(',').map(s => s.trim());
+                return { id: Date.now() + Math.random(), num, circle, item, price: parseInt(price)||0, image: null };
+            });
+            catalog = [...catalog, ...newItems];
+            await api('POST', catalog);
+            document.getElementById('bulk-input').value = '';
+            render();
+            alert(`${newItems.length}件登録しました`);
+        }
 
-            let imageData = imageFile ? await compressImage(imageFile) : null;
+        async function addToCatalog() {
+            const num = document.getElementById('c-num').value, circle = document.getElementById('c-circle').value,
+                  item = document.getElementById('c-item').value, price = parseInt(document.getElementById('c-price').value)||0;
+            const img = document.getElementById('c-image').files[0];
+            const imageData = img ? await compressImage(img) : null;
             catalog.push({id: Date.now(), num, circle, item, price, image: imageData});
             await api('POST', catalog);
-            document.getElementById('c-item').value = ''; document.getElementById('c-price').value = ''; document.getElementById('c-image').value = '';
             render();
         }
 
@@ -83,11 +100,11 @@
 
         function render() {
             const el = document.getElementById('catalog-list');
-            // 管理画面でも番号順に並べると見やすい
+            // 配置番号(num)で並べ替え
             catalog.sort((a, b) => (a.num || '').localeCompare(b.num || '', 'ja', {numeric: true}));
             el.innerHTML = catalog.map(i => `
                 <div class="bg-slate-800 p-3 rounded-2xl border border-slate-700 flex items-center gap-3">
-                    <div class="w-10 text-[10px] font-black text-pink-500 text-center bg-pink-500/10 py-1 rounded-md">${i.num || '--'}</div>
+                    <div class="w-10 text-[9px] font-black text-pink-500 text-center bg-pink-500/10 py-1 rounded-md uppercase">${i.num || '--'}</div>
                     <div class="flex-1 min-w-0">
                         <div class="text-[9px] font-bold text-slate-500 truncate uppercase">${i.circle}</div>
                         <div class="font-bold text-sm text-slate-100 truncate">${i.item}</div>
