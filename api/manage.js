@@ -9,7 +9,6 @@ export default async function handler(req, res) {
   const { userId, type } = req.query;
   const key = type === 'catalog' ? 'vggc_catalog' : `vggc_${userId}`;
 
-  // カタログ更新時のみパスワードチェック
   if (req.method === 'POST' && type === 'catalog') {
     if (req.headers['x-admin-password'] !== process.env.ADMIN_PASSWORD) {
       return res.status(403).json({ error: "認証エラー" });

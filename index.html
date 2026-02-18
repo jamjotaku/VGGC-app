@@ -2,30 +2,37 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VGGC List - Grouped</title>
+    <title>VGGC Navigator</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>.bought { text-decoration: line-through; opacity: 0.5; background-color: #f3f4f6; }</style>
+    <style>
+        .bought { text-decoration: line-through; opacity: 0.5; background-color: #f3f4f6; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
 </head>
 <body class="bg-slate-50 min-h-screen pb-24 text-slate-800 font-sans">
     <div class="max-w-md mx-auto p-4">
-        <header class="flex justify-between items-center mb-4 py-2">
-            <h1 class="text-2xl font-black text-pink-600 tracking-tighter uppercase">VGGC APP</h1>
-            <div id="sync-status" class="text-[9px] px-2 py-1 bg-green-100 text-green-600 rounded-full font-bold uppercase">Synced</div>
-        </header>
-
-        <div class="flex mb-6 bg-white rounded-xl shadow-sm overflow-hidden font-bold text-xs uppercase text-center">
-            <button onclick="switchTab('catalog')" id="tab-catalog" class="flex-1 py-4 border-b-2 border-pink-500 text-pink-500">お品書き</button>
-            <button onclick="switchTab('mine')" id="tab-mine" class="flex-1 py-4 text-gray-400">自分のリスト</button>
+        <div class="sticky top-0 z-30 bg-slate-50/95 backdrop-blur-md pb-2">
+            <header class="flex justify-between items-center py-2">
+                <h1 class="text-2xl font-black text-pink-600 tracking-tighter uppercase">VGGC APP</h1>
+                <div id="sync-status" class="text-[9px] px-2 py-1 bg-green-100 text-green-600 rounded-full font-bold uppercase tracking-tighter">Synced</div>
+            </header>
+            <div class="flex bg-white rounded-xl shadow-sm overflow-hidden font-bold text-[10px] uppercase text-center mb-3">
+                <button onclick="switchTab('catalog')" id="tab-catalog" class="flex-1 py-3 border-b-2 border-pink-500 text-pink-500">お品書き</button>
+                <button onclick="switchTab('mine')" id="tab-mine" class="flex-1 py-3 text-gray-400">自分のリスト</button>
+            </div>
+            
+            <div id="search-area" class="space-y-2">
+                <input id="search-input" type="text" oninput="render()" placeholder="配置、サークル、商品名で検索..." 
+                    class="w-full border-none shadow-sm bg-white p-3 rounded-xl text-xs focus:ring-2 focus:ring-pink-400">
+                <div id="category-filters" class="flex gap-2 overflow-x-auto no-scrollbar pb-1"></div>
+            </div>
         </div>
 
-        <div id="section-catalog" class="space-y-6">
-            <div id="catalog-display" class="space-y-8"></div>
-        </div>
-
-        <div id="section-mine" class="hidden space-y-6">
-            <div class="grid grid-cols-2 gap-3 mb-4 text-center text-xs">
-                <div class="bg-white p-4 rounded-2xl shadow-sm"><p class="text-gray-400 font-bold uppercase">Total</p><p class="text-lg font-black">¥<span id="total-price">0</span></p></div>
-                <div class="bg-white p-4 rounded-2xl shadow-sm"><p class="text-gray-400 font-bold uppercase">Pending</p><p class="text-lg font-black"><span id="pending-count">0</span></p></div>
+        <div id="section-catalog" class="mt-4"><div id="catalog-display" class="space-y-8"></div></div>
+        <div id="section-mine" class="hidden mt-4 space-y-6">
+            <div class="grid grid-cols-2 gap-3 mb-4 text-center">
+                <div class="bg-white p-4 rounded-2xl shadow-sm"><p class="text-[9px] text-gray-400 font-bold uppercase">Total</p><p class="text-lg font-black">¥<span id="total-price">0</span></p></div>
+                <div class="bg-white p-4 rounded-2xl shadow-sm"><p class="text-[9px] text-gray-400 font-bold uppercase">Pending</p><p class="text-lg font-black"><span id="pending-count">0</span></p></div>
             </div>
             <div id="my-list-display" class="space-y-6"></div>
             <div class="flex justify-center gap-6 py-6"><button onclick="copyShareUrl()" class="text-[10px] font-bold text-blue-500 uppercase">同期URL</button><button onclick="allClear()" class="text-[10px] font-bold text-red-400 uppercase">全消去</button></div>
@@ -33,15 +40,19 @@
     </div>
 
     <script>
-        let myItems = [], catalog = [], userId = new URLSearchParams(window.location.search).get('id') || localStorage.getItem('vggc_userid') || 'u-'+Math.random().toString(36).substring(2,11);
+        let myItems = [], catalog = [], activeTab = 'catalog', activeCategory = 'すべて';
+        const userId = new URLSearchParams(window.location.search).get('id') || localStorage.getItem('vggc_userid') || 'u-'+Math.random().toString(36).substring(2,11);
         localStorage.setItem('vggc_userid', userId);
         if (!window.location.search.includes(userId)) window.history.replaceState(null, '', `?id=${userId}`);
 
         function switchTab(tab) {
+            activeTab = tab;
             document.getElementById('section-catalog').classList.toggle('hidden', tab !== 'catalog');
             document.getElementById('section-mine').classList.toggle('hidden', tab !== 'mine');
-            document.getElementById('tab-catalog').className = tab === 'catalog' ? 'flex-1 py-4 border-b-2 border-pink-500 text-pink-500' : 'flex-1 py-4 text-gray-400 font-bold';
-            document.getElementById('tab-mine').className = tab === 'mine' ? 'flex-1 py-4 border-b-2 border-pink-500 text-pink-500' : 'flex-1 py-4 text-gray-400 font-bold';
+            document.getElementById('search-area').classList.toggle('hidden', tab !== 'catalog');
+            document.getElementById('tab-catalog').className = tab === 'catalog' ? 'flex-1 py-3 border-b-2 border-pink-500 text-pink-500' : 'flex-1 py-3 text-gray-400 font-bold';
+            document.getElementById('tab-mine').className = tab === 'mine' ? 'flex-1 py-3 border-b-2 border-pink-500 text-pink-500' : 'flex-1 py-3 text-gray-400 font-bold';
+            render();
         }
 
         async function api(method='GET', type='user', data=null) {
@@ -51,12 +62,8 @@
             return res.json();
         }
 
-        async function init() {
-            catalog = await api('GET', 'catalog'); myItems = await api('GET', 'user');
-            render();
-        }
+        function setCategory(cat) { activeCategory = cat; render(); }
 
-        // データをサークルごとにグループ化する関数
         function groupByCircle(data) {
             data.sort((a, b) => (a.num || '').localeCompare(b.num || '', 'ja', {numeric: true}) || (a.circle || '').localeCompare(b.circle || ''));
             const groups = {};
@@ -69,69 +76,65 @@
         }
 
         function render() {
-            // カタログの描画
+            const search = document.getElementById('search-input').value.toLowerCase();
+            
+            // カテゴリーフィルター生成
+            const cats = ['すべて', ...new Set(catalog.map(i => i.type).filter(t => t))];
+            document.getElementById('category-filters').innerHTML = cats.map(c => `
+                <button onclick="setCategory('${c}')" class="px-3 py-1.5 rounded-full whitespace-nowrap text-[10px] font-bold shadow-sm transition-all ${activeCategory === c ? 'bg-pink-500 text-white' : 'bg-white text-gray-400'}">${c}</button>
+            `).join('');
+
+            // カタログ描画
+            const filtered = catalog.filter(i => {
+                const matchSearch = (i.num + i.circle + i.item).toLowerCase().includes(search);
+                const matchCat = activeCategory === 'すべて' || i.type === activeCategory;
+                return matchSearch && matchCat;
+            });
+
             const catEl = document.getElementById('catalog-display');
-            const groupedCatalog = groupByCircle(catalog);
-            catEl.innerHTML = groupedCatalog.length ? groupedCatalog.map(group => `
+            const groupedCat = groupByCircle(filtered);
+            catEl.innerHTML = groupedCat.map(g => `
                 <div class="space-y-3">
-                    <div class="flex items-center gap-2 px-1">
-                        <span class="bg-pink-600 text-white text-[10px] font-black px-2 py-0.5 rounded-md">${group.num || '??'}</span>
-                        <h2 class="text-sm font-black text-gray-800 uppercase tracking-tight">${group.circle}</h2>
-                    </div>
+                    <div class="flex items-center gap-2"><span class="bg-pink-600 text-white text-[9px] font-black px-2 py-0.5 rounded-md">${g.num || '??'}</span><h2 class="text-xs font-black text-gray-800 uppercase tracking-tight">${g.circle}</h2></div>
                     <div class="grid gap-3">
-                        ${group.items.map(i => `
-                            <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex border border-gray-100 h-24">
+                        ${g.items.map(i => `
+                            <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex border border-gray-100 h-24 relative">
+                                <span class="absolute top-1 right-1 bg-gray-100 text-[8px] text-gray-400 px-1.5 py-0.5 rounded italic font-bold z-10">${i.type || '他'}</span>
                                 ${i.image ? `<img src="${i.image}" class="w-24 h-full object-cover bg-gray-100 flex-shrink-0">` : ''}
-                                <div class="p-3 flex flex-1 justify-between items-center min-w-0">
-                                    <div class="min-w-0 pr-2">
-                                        <div class="font-bold text-gray-800 text-sm leading-tight mb-1 truncate">${i.item}</div>
-                                        <div class="text-xs font-bold text-pink-500">¥${i.price.toLocaleString()}</div>
-                                    </div>
-                                    <button onclick='addFromCatalog(${JSON.stringify(i).replace(/'/g,"&apos;")})' class="bg-pink-500 text-white text-[10px] font-black px-4 py-2 rounded-full shadow-md active:scale-95 transition-all">追加</button>
+                                <div class="p-3 flex-1 flex justify-between items-center min-w-0">
+                                    <div class="min-w-0 pr-2"><div class="font-bold text-gray-700 text-xs leading-tight mb-1 truncate">${i.item}</div><div class="text-[10px] font-black text-pink-500">¥${i.price.toLocaleString()}</div></div>
+                                    <button onclick='addFromCatalog(${JSON.stringify(i).replace(/'/g,"&apos;")})' class="bg-pink-500 text-white text-[10px] font-black px-4 py-2 rounded-full shadow-lg active:scale-95 transition-all">追加</button>
                                 </div>
                             </div>
                         `).join('')}
                     </div>
                 </div>
-            `).join('') : '<p class="text-center py-20 text-gray-300 text-xs tracking-widest uppercase font-bold">Waiting for updates...</p>';
-            
-            // 自分のリストの描画
-            const myListEl = document.getElementById('my-list-display');
-            const groupedMine = groupByCircle(myItems);
-            let total = 0, pending = 0;
-            
-            myListEl.innerHTML = groupedMine.length ? groupedMine.map(group => `
-                <div class="space-y-2">
-                    <div class="flex items-center gap-2 px-1">
-                        <span class="text-pink-600 font-black text-[10px]">${group.num || '??'}</span>
-                        <h2 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">${group.circle}</h2>
-                    </div>
-                    <div class="space-y-2">
-                        ${group.items.map(i => {
-                            total += i.price; if(!i.bought) pending++;
-                            return `
-                                <div class="bg-white p-4 rounded-xl shadow-sm flex justify-between items-center transition-all ${i.bought?'bought':''}">
-                                    <div onclick="toggleBought(${i.myId})" class="flex-1 cursor-pointer min-w-0 mr-4">
-                                        <div class="font-bold text-sm text-gray-700 truncate">${i.item}</div>
-                                        <div class="text-xs font-bold text-pink-500">¥${i.price.toLocaleString()}</div>
-                                    </div>
-                                    <input type="checkbox" ${i.bought?'checked':''} onchange="toggleBought(${i.myId})" class="w-5 h-5 accent-pink-500 rounded-full">
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-            `).join('') : '<p class="text-center py-20 text-gray-300 text-[10px] font-bold uppercase tracking-widest">No items selected</p>';
+            `).join('');
 
+            // 自分のリスト描画
+            let total = 0, pending = 0;
+            const groupedMine = groupByCircle(myItems);
+            document.getElementById('my-list-display').innerHTML = groupedMine.map(g => `
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2 px-1"><span class="text-pink-600 font-black text-[9px]">${g.num}</span><h2 class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">${g.circle}</h2></div>
+                    ${g.items.map(i => {
+                        total += i.price; if(!i.bought) pending++;
+                        return `<div class="bg-white p-4 rounded-xl shadow-sm flex justify-between items-center ${i.bought?'bought':''}">
+                            <div onclick="toggleBought(${i.myId})" class="flex-1 cursor-pointer min-w-0 mr-4"><div class="font-bold text-xs text-gray-700 truncate">${i.item}</div><div class="text-[10px] font-black text-pink-500">¥${i.price.toLocaleString()}</div></div>
+                            <input type="checkbox" ${i.bought?'checked':''} onchange="toggleBought(${i.myId})" class="w-5 h-5 accent-pink-500">
+                        </div>`;
+                    }).join('')}
+                </div>
+            `).join('');
             document.getElementById('total-price').innerText = total.toLocaleString();
             document.getElementById('pending-count').innerText = pending;
         }
 
+        async function init() { catalog = await api('GET', 'catalog'); myItems = await api('GET', 'user'); render(); }
         function addFromCatalog(item) { myItems.push({...item, bought: false, myId: Date.now()}); api('POST', 'user', myItems); render(); }
         function toggleBought(myId) { myItems = myItems.map(i => i.myId === myId ? {...i, bought: !i.bought} : i); api('POST', 'user', myItems); render(); }
-        function allClear() { if(confirm("消去しますか？")) { myItems = []; api('POST', 'user', myItems); render(); } }
-        function copyShareUrl() { navigator.clipboard.writeText(window.location.href); alert("コピーしました！"); }
-
+        function allClear() { if(confirm("消去？")) { myItems = []; api('POST', 'user', myItems); render(); } }
+        function copyShareUrl() { navigator.clipboard.writeText(window.location.href); alert("Copied!"); }
         init();
     </script>
 </body>
