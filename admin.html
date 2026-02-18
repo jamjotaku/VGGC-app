@@ -1,182 +1,79 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VGGC 管理パネル (Auth)</title>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - AI Scan</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen p-4 pb-20">
+<body class="bg-slate-900 text-slate-100 min-h-screen p-4 pb-24">
     <div class="max-w-md mx-auto">
-        <header class="flex justify-between items-center mb-8 py-4 border-b border-slate-700">
-            <div>
-                <h1 class="text-xl font-black text-pink-500 tracking-widest uppercase">Master Admin</h1>
-                <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Authorized Access Only</p>
-            </div>
-            <div id="sync-status" class="text-[10px] px-2 py-1 bg-slate-700 text-slate-400 rounded-full font-bold">Checking...</div>
+        <header class="flex justify-between items-center mb-6 py-4 border-b border-slate-800">
+            <h1 class="text-xl font-black text-pink-500 uppercase tracking-widest">Master Admin</h1>
+            <div id="sync-status" class="text-[9px] px-2 py-1 bg-slate-800 text-slate-500 rounded-full font-bold uppercase tracking-tighter">Ready</div>
         </header>
 
-        <section class="bg-slate-800 rounded-2xl shadow-xl p-6 mb-8 border border-slate-700">
-            <h2 class="text-xs font-bold text-slate-400 mb-4 uppercase tracking-tighter">お品書きの新規登録</h2>
+        <section class="bg-slate-800 rounded-3xl p-6 mb-6 shadow-2xl border border-slate-700">
             <div class="space-y-4">
-                <div>
-                    <label class="text-[10px] font-bold text-slate-500 ml-1 uppercase">Circle / Booth</label>
-                    <input id="c-circle" type="text" placeholder="例: ぶいすぽっ！公式" class="w-full bg-slate-700 border-none p-3 rounded-xl focus:ring-2 focus:ring-pink-500 text-sm placeholder-slate-500">
-                </div>
-                <div>
-                    <label class="text-[10px] font-bold text-slate-500 ml-1 uppercase">Item Name</label>
-                    <input id="c-item" type="text" placeholder="例: 限定アクリルスタンド" class="w-full bg-slate-700 border-none p-3 rounded-xl focus:ring-2 focus:ring-pink-500 text-sm placeholder-slate-500">
-                </div>
-                <div>
-                    <label class="text-[10px] font-bold text-slate-500 ml-1 uppercase">Price (JPY)</label>
-                    <input id="c-price" type="number" placeholder="2000" class="w-full bg-slate-700 border-none p-3 rounded-xl focus:ring-2 focus:ring-pink-500 text-sm placeholder-slate-500">
-                </div>
-                <button onclick="addToCatalog()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-black py-4 rounded-xl shadow-lg shadow-pink-900/20 transition-all mt-2 active:scale-95">
-                    カタログを更新
-                </button>
+                <input id="c-circle" type="text" placeholder="サークル名" class="w-full bg-slate-700 border-none p-4 rounded-2xl text-sm">
+                <input id="c-item" type="text" placeholder="アイテム名" class="w-full bg-slate-700 border-none p-4 rounded-2xl text-sm">
+                <input id="c-price" type="number" placeholder="価格" class="w-full bg-slate-700 border-none p-4 rounded-2xl text-sm">
+                <button onclick="addToCatalog()" class="w-full bg-pink-600 font-black py-4 rounded-2xl shadow-xl shadow-pink-900/20 active:scale-95 transition-all">追加・更新</button>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-slate-700">
+                <p class="text-[10px] font-black text-pink-400 uppercase tracking-widest mb-3">AI Image Scan</p>
+                <input id="ai-image" type="file" accept="image/*" class="hidden" onchange="handleAiScan(this)">
+                <label for="ai-image" class="block w-full bg-slate-700 hover:bg-slate-600 text-center py-4 rounded-2xl cursor-pointer text-xs font-bold transition-all">お品書き画像をアップロード</label>
+                <div id="ai-loading" class="hidden mt-3 text-center text-[10px] text-pink-500 animate-pulse font-bold">AI ANALYZING...</div>
             </div>
         </section>
 
-        <section>
-            <div class="flex justify-between items-end mb-4 px-1">
-                <h2 class="text-sm font-bold text-slate-400 uppercase tracking-tighter">現在のお品書き一覧</h2>
-                <span id="item-count" class="text-[10px] font-bold text-pink-500 bg-pink-500/10 px-2 py-1 rounded">0 ITEMS</span>
-            </div>
-            
-            <div id="catalog-list" class="space-y-3">
-                <p class="text-center py-10 text-slate-600 text-xs">読み込み中...</p>
-            </div>
-        </section>
-
-        <div class="mt-12 pt-8 border-t border-slate-800 flex flex-col items-center gap-4">
-            <button onclick="clearSavedPassword()" class="text-[10px] font-bold text-slate-500 hover:text-white transition-colors uppercase tracking-widest">
-                パスワードを削除してログアウト
-            </button>
-            <button onclick="resetCatalog()" class="text-[10px] font-bold text-red-900 hover:text-red-500 transition-colors uppercase tracking-widest">
-                カタログを全削除
-            </button>
-        </div>
+        <div id="catalog-list" class="space-y-3"></div>
     </div>
 
     <script>
         let catalog = [];
-
-        // 認証付きAPI通信関数
-        async function api(method = 'GET', data = null) {
-            const statusEl = document.getElementById('sync-status');
-            statusEl.innerText = 'Syncing...';
-            statusEl.className = 'text-[10px] px-2 py-1 bg-yellow-900/30 text-yellow-500 rounded-full font-bold uppercase';
-
-            // ローカルストレージからパスワードを取得
+        async function api(method='GET', type='catalog', data=null) {
             const pass = localStorage.getItem('vggc_admin_pass');
-
-            const options = { 
-                method,
-                headers: { 
-                    'x-admin-password': pass || '' // ヘッダーにパスワードをセット
-                }
-            };
-
-            if (data) {
-                options.body = JSON.stringify(data);
-                options.headers['Content-Type'] = 'application/json';
+            const res = await fetch(`/api/manage?type=${type}`, {
+                method, headers: {'Content-Type': 'application/json', 'x-admin-password': pass || ''},
+                body: data ? JSON.stringify(data) : null
+            });
+            if (res.status === 403) {
+                const p = prompt("Password:"); if(p) { localStorage.setItem('vggc_admin_pass', p); return api(method, type, data); }
             }
-
-            try {
-                const res = await fetch('/api/manage?type=catalog', options);
-                
-                // 認証エラー (403) の場合、パスワードを求めて再試行
-                if (res.status === 403) {
-                    const newPass = prompt("管理者パスワードを入力してください");
-                    if (newPass) {
-                        localStorage.setItem('vggc_admin_pass', newPass);
-                        return api(method, data); // 正しいパスワードで再実行
-                    }
-                    throw new Error("認証が必要です");
-                }
-
-                if (!res.ok) throw new Error("通信エラーが発生しました");
-
-                const result = await res.json();
-                statusEl.innerText = 'Connected';
-                statusEl.className = 'text-[10px] px-2 py-1 bg-green-900/30 text-green-500 rounded-full font-bold uppercase';
-                return result;
-            } catch (e) {
-                statusEl.innerText = 'Error';
-                statusEl.className = 'text-[10px] px-2 py-1 bg-red-900/30 text-red-500 rounded-full font-bold uppercase';
-                console.error(e);
-            }
+            return res.json();
         }
 
-        async function loadCatalog() {
-            catalog = await api('GET');
-            render();
+        async function init() { catalog = await api('GET'); render(); }
+        function render() {
+            const el = document.getElementById('catalog-list');
+            el.innerHTML = catalog.map(i => `<div class="bg-slate-800 p-4 rounded-2xl border border-slate-700 flex justify-between items-center"><div><div class="text-[9px] font-black text-pink-500 uppercase">${i.circle}</div><div class="font-bold">${i.item}</div><div class="text-xs font-medium text-slate-500">¥${i.price.toLocaleString()}</div></div><button onclick="deleteItem(${i.id})" class="text-slate-600 hover:text-red-500 p-2">🗑️</button></div>`).reverse().join('');
         }
 
         async function addToCatalog() {
-            const circle = document.getElementById('c-circle').value;
-            const item = document.getElementById('c-item').value;
-            const price = parseInt(document.getElementById('c-price').value) || 0;
-
-            if (!circle || !item) return alert("サークル名とアイテム名は必須です");
-
-            const newItem = { id: Date.now(), circle, item, price };
-            catalog.push(newItem);
-
-            const result = await api('POST', catalog);
-            if (result) {
-                document.getElementById('c-item').value = '';
-                document.getElementById('c-price').value = '';
-                render();
-            }
+            const circle = document.getElementById('c-circle').value, item = document.getElementById('c-item').value, price = parseInt(document.getElementById('c-price').value)||0;
+            if(!circle||!item) return alert("入力エラー");
+            catalog.push({id: Date.now(), circle, item, price});
+            await api('POST', 'catalog', catalog); render();
         }
 
-        async function deleteItem(id) {
-            if(!confirm("このアイテムを削除しますか？")) return;
-            catalog = catalog.filter(i => i.id !== id);
-            await api('POST', catalog);
-            render();
+        async function deleteItem(id) { if(confirm("削除？")) { catalog = catalog.filter(i => i.id !== id); await api('POST', 'catalog', catalog); render(); } }
+
+        async function handleAiScan(input) {
+            if(!input.files[0]) return;
+            const loading = document.getElementById('ai-loading'); loading.classList.remove('hidden');
+            const base64 = await new Promise(r => { const rd = new FileReader(); rd.onload = () => r(rd.result.split(',')[1]); rd.readAsDataURL(input.files[0]); });
+            
+            try {
+                const res = await api('POST', 'dify', { image: base64 });
+                const json = JSON.parse(res.answer.match(/\[.*\]/s)[0]);
+                catalog = [...catalog, ...json.map(i => ({...i, id: Date.now()+Math.random()}))];
+                await api('POST', 'catalog', catalog); render();
+                alert(`${json.length}件読み込みました！`);
+            } catch(e) { alert("AIスキャン失敗"); } finally { loading.classList.add('hidden'); input.value=''; }
         }
-
-        async function resetCatalog() {
-            if(!confirm("【警告】お品書きをすべて削除します。よろしいですか？")) return;
-            catalog = [];
-            await api('POST', catalog);
-            render();
-        }
-
-        function clearSavedPassword() {
-            localStorage.removeItem('vggc_admin_pass');
-            alert("ログアウトしました");
-            location.reload();
-        }
-
-        function render() {
-            const listEl = document.getElementById('catalog-list');
-            document.getElementById('item-count').innerText = `${catalog.length} ITEMS`;
-
-            if (catalog.length === 0) {
-                listEl.innerHTML = '<div class="bg-slate-800/50 border border-dashed border-slate-700 rounded-2xl py-10 text-center text-slate-600 text-xs">データがありません</div>';
-                return;
-            }
-
-            listEl.innerHTML = catalog.map(i => `
-                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center hover:border-pink-500/50 transition-all">
-                    <div>
-                        <div class="text-[9px] font-black text-pink-500 uppercase tracking-wider">${i.circle}</div>
-                        <div class="font-bold text-slate-100">${i.item}</div>
-                        <div class="text-xs font-medium text-slate-400">¥${i.price.toLocaleString()}</div>
-                    </div>
-                    <button onclick="deleteItem(${i.id})" class="text-slate-600 hover:text-red-500 p-2 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                    </button>
-                </div>
-            `).reverse().join('');
-        }
-
-        loadCatalog();
+        init();
     </script>
 </body>
 </html>
