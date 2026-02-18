@@ -6,17 +6,22 @@ const redis = new Redis({
 })
 
 export default async function handler(req, res) {
-  const { userId } = req.query;
-  if (!userId) return res.status(400).json({ error: "No User ID" });
+  const { userId, type } = req.query;
+  const key = type === 'catalog' ? 'vggc_catalog' : `vggc_${userId}`;
 
-  const key = `vggc_${userId}`;
+  // 【重要】カタログの更新(POST)時のみパスワードをチェック
+  if (req.method === 'POST' && type === 'catalog') {
+    const password = req.headers['x-admin-password']; // ヘッダーからパスワード取得
+    if (password !== process.env.ADMIN_PASSWORD) {
+      return res.status(403).json({ error: "認証エラー：パスワードが違います" });
+    }
+  }
 
   try {
     if (req.method === 'GET') {
       const data = await redis.get(key);
       return res.status(200).json(data || []);
     }
-
     if (req.method === 'POST') {
       await redis.set(key, req.body);
       return res.status(200).json({ success: true });

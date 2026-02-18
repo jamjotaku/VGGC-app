@@ -3,140 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VGGC 買い物リスト Cloud</title>
+    <title>VGGC 買い物マネージャー</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .bought { text-decoration: line-through; opacity: 0.5; background-color: #f3f4f6; }
+        .tab-active { border-bottom: 3px solid #ec4899; color: #ec4899; }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen pb-20">
+<body class="bg-slate-50 min-h-screen pb-24">
     <div class="max-w-md mx-auto p-4">
-        <header class="flex justify-between items-center mb-6 py-4">
-            <h1 class="text-xl font-bold text-pink-600">VGGC List</h1>
-            <span id="sync-status" class="text-[10px] px-2 py-1 bg-green-100 text-green-600 rounded-full">Synced</span>
+        <header class="flex justify-between items-center mb-4 py-2">
+            <h1 class="text-2xl font-black text-pink-600 tracking-tighter">VGGC APP</h1>
+            <div id="sync-status" class="text-[10px] px-2 py-1 bg-green-100 text-green-600 rounded-full font-bold uppercase">Synced</div>
         </header>
 
-        <div class="bg-white rounded-2xl shadow-sm p-4 mb-6 space-y-3">
-            <input id="circle" type="text" placeholder="サークル/配置番号" class="w-full border-none bg-gray-100 p-3 rounded-xl focus:ring-2 focus:ring-pink-400">
-            <input id="item" type="text" placeholder="アイテム名" class="w-full border-none bg-gray-100 p-3 rounded-xl focus:ring-2 focus:ring-pink-400">
-            <input id="price" type="number" placeholder="価格" class="w-full border-none bg-gray-100 p-3 rounded-xl focus:ring-2 focus:ring-pink-400">
-            <button onclick="addItem()" class="w-full bg-pink-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-pink-200">追加する</button>
+        <div class="flex mb-6 bg-white rounded-xl shadow-sm overflow-hidden">
+            <button onclick="switchTab('catalog')" id="tab-catalog" class="flex-1 py-3 text-sm font-bold tab-active">お品書き</button>
+            <button onclick="switchTab('mine')" id="tab-mine" class="flex-1 py-3 text-sm font-bold text-gray-400">自分のリスト</button>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 mb-6">
-            <div class="bg-white p-4 rounded-2xl shadow-sm text-center">
-                <p class="text-xs text-gray-500">合計予算</p>
-                <p class="text-lg font-bold text-gray-800">¥<span id="total-price">0</span></p>
-            </div>
-            <div class="bg-white p-4 rounded-2xl shadow-sm text-center">
-                <p class="text-xs text-gray-500">未購入</p>
-                <p class="text-lg font-bold text-gray-800"><span id="pending-count">0</span>点</p>
+        <div id="section-catalog" class="space-y-4">
+            <p class="text-[11px] text-gray-400 font-bold ml-1">公式/サークル お品書き一覧</p>
+            <div id="catalog-display" class="grid gap-3">
+                <p class="text-center py-10 text-gray-300 text-sm">カタログを読み込み中...</p>
             </div>
         </div>
 
-        <ul id="shopping-list" class="space-y-3"></ul>
-        
-        <div class="mt-8 flex justify-center gap-6">
-            <button onclick="copyShareUrl()" class="text-sm text-blue-500 font-medium">リストを共有/同期</button>
-            <button onclick="allClear()" class="text-sm text-red-400 font-medium">全消去</button>
+        <div id="section-mine" class="hidden space-y-4">
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div class="bg-white p-4 rounded-2xl shadow-sm border-b-2 border-pink-100">
+                    <p class="text-[10px] text-gray-400 font-bold uppercase">Total Budget</p>
+                    <p class="text-lg font-black text-gray-800">¥<span id="total-price">0</span></p>
+                </div>
+                <div class="bg-white p-4 rounded-2xl shadow-sm border-b-2 border-pink-100">
+                    <p class="text-[10px] text-gray-400 font-bold uppercase">Pending</p>
+                    <p class="text-lg font-black text-gray-800"><span id="pending-count">0</span><span class="text-xs ml-1">items</span></p>
+                </div>
+            </div>
+
+            <details class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <summary class="p-3 text-xs font-bold text-gray-500 cursor-pointer uppercase">自分でアイテムを追加</summary>
+                <div class="p-3 pt-0 space-y-2">
+                    <input id="custom-item" type="text" placeholder="商品名" class="w-full bg-gray-50 p-2 text-sm rounded-lg border-none focus:ring-1 focus:ring-pink-400">
+                    <input id="custom-price" type="number" placeholder="価格" class="w-full bg-gray-50 p-2 text-sm rounded-lg border-none focus:ring-1 focus:ring-pink-400">
+                    <button onclick="addCustomItem()" class="w-full bg-slate-800 text-white text-xs font-bold py-2 rounded-lg">リストに追加</button>
+                </div>
+            </details>
+
+            <ul id="shopping-list" class="space-y-2">
+                </ul>
+
+            <div class="flex justify-center gap-4 py-4">
+                <button onclick="copyShareUrl()" class="text-[10px] font-bold text-blue-500 uppercase tracking-widest">URLをコピーして同期</button>
+                <button onclick="allClear()" class="text-[10px] font-bold text-red-400 uppercase tracking-widest">全消去</button>
+            </div>
         </div>
     </div>
 
     <script>
-        let items = [];
+        let myItems = [];
+        let catalog = [];
         let userId = new URLSearchParams(window.location.search).get('id') || localStorage.getItem('vggc_userid');
 
         if (!userId) {
             userId = 'u-' + Math.random().toString(36).substring(2, 11);
             localStorage.setItem('vggc_userid', userId);
         }
-        
-        // URLにIDを固定
         if (!window.location.search.includes(userId)) {
             window.history.replaceState(null, '', `?id=${userId}`);
         }
 
-        async function syncData(method = 'GET', body = null) {
+        // 表示切り替え
+        function switchTab(tab) {
+            document.getElementById('section-catalog').classList.toggle('hidden', tab !== 'catalog');
+            document.getElementById('section-mine').classList.toggle('hidden', tab !== 'mine');
+            document.getElementById('tab-catalog').className = tab === 'catalog' ? 'flex-1 py-3 text-sm font-bold tab-active' : 'flex-1 py-3 text-sm font-bold text-gray-400';
+            document.getElementById('tab-mine').className = tab === 'mine' ? 'flex-1 py-3 text-sm font-bold tab-active' : 'flex-1 py-3 text-sm font-bold text-gray-400';
+        }
+
+        // API通信
+        async function api(method = 'GET', type = 'user', data = null) {
             const statusEl = document.getElementById('sync-status');
             statusEl.innerText = 'Syncing...';
-            statusEl.className = 'text-[10px] px-2 py-1 bg-yellow-100 text-yellow-600 rounded-full';
-
+            const url = `/api/manage?userId=${userId}${type === 'catalog' ? '&type=catalog' : ''}`;
             const options = { method };
-            if (body) {
-                options.body = JSON.stringify(body);
+            if (data) {
+                options.body = JSON.stringify(data);
                 options.headers = { 'Content-Type': 'application/json' };
             }
-
-            try {
-                const res = await fetch(`/api/manage?userId=${userId}`, options);
-                if (method === 'GET') items = await res.json();
-                render();
-                statusEl.innerText = 'Synced';
-                statusEl.className = 'text-[10px] px-2 py-1 bg-green-100 text-green-600 rounded-full';
-            } catch (e) {
-                statusEl.innerText = 'Offline';
-                statusEl.className = 'text-[10px] px-2 py-1 bg-red-100 text-red-600 rounded-full';
-            }
+            const res = await fetch(url, options);
+            statusEl.innerText = 'Synced';
+            return res.json();
         }
 
-        function addItem() {
-            const circle = document.getElementById('circle').value;
-            const item = document.getElementById('item').value;
-            const price = parseInt(document.getElementById('price').value) || 0;
+        // 初期ロード
+        async function init() {
+            catalog = await api('GET', 'catalog');
+            myItems = await api('GET', 'user');
+            renderCatalog();
+            renderMyList();
+        }
+
+        // カタログから追加
+        async function addFromCatalog(itemId) {
+            const item = catalog.find(i => i.id === itemId);
             if (!item) return;
-
-            items.push({ circle, item, price, bought: false, id: Date.now() });
-            document.getElementById('circle').value = '';
-            document.getElementById('item').value = '';
-            document.getElementById('price').value = '';
-            syncData('POST', items);
+            myItems.push({ ...item, bought: false, myId: Date.now() });
+            await api('POST', 'user', myItems);
+            renderMyList();
+            alert(`「${item.item}」を追加しました！`);
         }
 
-        function toggleBought(id) {
-            items = items.map(i => i.id === id ? { ...i, bought: !i.bought } : i);
-            syncData('POST', items);
+        // 自分で追加
+        async function addCustomItem() {
+            const name = document.getElementById('custom-item').value;
+            const price = parseInt(document.getElementById('custom-price').value) || 0;
+            if (!name) return;
+            myItems.push({ circle: 'CUSTOM', item: name, price, bought: false, myId: Date.now() });
+            document.getElementById('custom-item').value = '';
+            document.getElementById('custom-price').value = '';
+            await api('POST', 'user', myItems);
+            renderMyList();
         }
 
-        function allClear() {
-            if(confirm("データをすべて消去しますか？")) {
-                items = [];
-                syncData('POST', items);
+        function toggleBought(myId) {
+            myItems = myItems.map(i => i.myId === myId ? { ...i, bought: !i.bought } : i);
+            api('POST', 'user', myItems);
+            renderMyList();
+        }
+
+        async function allClear() {
+            if(confirm("自分のリストを空にしますか？")) {
+                myItems = [];
+                await api('POST', 'user', myItems);
+                renderMyList();
             }
         }
 
         function copyShareUrl() {
             navigator.clipboard.writeText(window.location.href);
-            alert("自分専用の同期URLをコピーしました。他の端末で開くと同期できます！");
+            alert("同期用URLをコピーしました！他の端末で開くとリストを共有できます。");
         }
 
-        function render() {
-            const listEl = document.getElementById('shopping-list');
-            listEl.innerHTML = '';
-            let total = 0, pending = 0;
+        function renderCatalog() {
+            const el = document.getElementById('catalog-display');
+            if (catalog.length === 0) {
+                el.innerHTML = '<p class="text-center text-gray-400 text-xs py-10">現在、公開中のお品書きはありません。</p>';
+                return;
+            }
+            el.innerHTML = catalog.map(i => `
+                <div class="bg-white p-4 rounded-2xl shadow-sm flex justify-between items-center border-l-4 border-pink-400">
+                    <div>
+                        <div class="text-[9px] font-black text-pink-400 uppercase">${i.circle}</div>
+                        <div class="font-bold text-gray-800">${i.item}</div>
+                        <div class="text-sm font-medium text-gray-500">¥${i.price.toLocaleString()}</div>
+                    </div>
+                    <button onclick="addFromCatalog(${i.id})" class="bg-pink-500 text-white text-[10px] font-black px-4 py-2 rounded-full shadow-md shadow-pink-100 uppercase tracking-tighter">ほしい</button>
+                </div>
+            `).join('');
+        }
 
-            items.forEach(i => {
+        function renderMyList() {
+            const el = document.getElementById('shopping-list');
+            let total = 0, pending = 0;
+            el.innerHTML = '';
+            
+            myItems.forEach(i => {
                 total += i.price;
                 if (!i.bought) pending++;
-
                 const li = document.createElement('li');
-                li.className = `flex items-center justify-between p-4 rounded-2xl shadow-sm transition-all ${i.bought ? 'bought' : 'bg-white'}`;
+                li.className = `flex justify-between items-center p-4 rounded-xl shadow-sm transition-all ${i.bought ? 'bought' : 'bg-white'}`;
                 li.innerHTML = `
-                    <div onclick="toggleBought(${i.id})" class="flex-1 cursor-pointer">
-                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">${i.circle || 'FREE'}</div>
-                        <div class="font-bold text-gray-800">${i.item}</div>
-                        <div class="text-sm font-semibold text-pink-500">¥${i.price.toLocaleString()}</div>
+                    <div onclick="toggleBought(${i.myId})" class="flex-1 cursor-pointer">
+                        <div class="text-[9px] font-bold text-gray-400 uppercase">${i.circle}</div>
+                        <div class="font-bold text-gray-700">${i.item}</div>
+                        <div class="text-sm font-bold text-pink-500">¥${i.price.toLocaleString()}</div>
                     </div>
-                    <input type="checkbox" ${i.bought ? 'checked' : ''} onchange="toggleBought(${i.id})" class="w-6 h-6 rounded-full accent-pink-500">
+                    <input type="checkbox" ${i.bought ? 'checked' : ''} onchange="toggleBought(${i.myId})" class="w-5 h-5 accent-pink-500 rounded-full">
                 `;
-                listEl.appendChild(li);
+                el.appendChild(li);
             });
-
             document.getElementById('total-price').innerText = total.toLocaleString();
             document.getElementById('pending-count').innerText = pending;
         }
 
-        // 初期読み込み
-        syncData();
+        init();
     </script>
 </body>
 </html>
