@@ -61,18 +61,52 @@
         async function deleteItem(id) { if(confirm("削除？")) { catalog = catalog.filter(i => i.id !== id); await api('POST', 'catalog', catalog); render(); } }
 
         async function handleAiScan(input) {
-            if(!input.files[0]) return;
-            const loading = document.getElementById('ai-loading'); loading.classList.remove('hidden');
-            const base64 = await new Promise(r => { const rd = new FileReader(); rd.onload = () => r(rd.result.split(',')[1]); rd.readAsDataURL(input.files[0]); });
-            
-            try {
-                const res = await api('POST', 'dify', { image: base64 });
-                const json = JSON.parse(res.answer.match(/\[.*\]/s)[0]);
-                catalog = [...catalog, ...json.map(i => ({...i, id: Date.now()+Math.random()}))];
-                await api('POST', 'catalog', catalog); render();
-                alert(`${json.length}件読み込みました！`);
-            } catch(e) { alert("AIスキャン失敗"); } finally { loading.classList.add('hidden'); input.value=''; }
+    if(!input.files[0]) return;
+    const loading = document.getElementById('ai-loading');
+    loading.classList.remove('hidden');
+    
+    // 画像をBase64に変換
+    const base64 = await new Promise(r => {
+        const rd = new FileReader();
+        rd.onload = () => r(rd.result.split(',')[1]);
+        rd.readAsDataURL(input.files[0]);
+    });
+    
+    try {
+        const res = await api('POST', 'dify', { image: base64 });
+        
+        // エラーレスポンスのチェック
+        if (res.error) {
+            throw new Error(`APIエラー: ${res.error}`);
         }
+
+        // AIの回答があるかチェック
+        if (!res.answer) {
+            console.log("Difyからの応答:", res);
+            throw new Error("AIから有効な回答が得られませんでした。Difyのログを確認してください。");
+        }
+
+        // JSON部分を抽出
+        const match = res.answer.match(/\[.*\]/s);
+        if (!match) {
+            console.log("解析不能な回答:", res.answer);
+            throw new Error("AIが正しい形式（JSON）で回答しませんでした。プロンプトを見直してください。");
+        }
+
+        const json = JSON.parse(match[0]);
+        catalog = [...catalog, ...json.map(i => ({...i, id: Date.now() + Math.random()}))];
+        await api('POST', 'catalog', catalog);
+        render();
+        alert(`${json.length}件読み込みました！`);
+
+    } catch(e) {
+        console.error("詳細エラー:", e);
+        alert(`スキャン失敗: ${e.message}`); // ここで具体的な原因を表示
+    } finally {
+        loading.classList.add('hidden');
+        input.value = '';
+    }
+}
         init();
     </script>
 </body>
