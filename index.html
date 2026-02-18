@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VGGC 買い物リスト Cloud</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .bought { text-decoration: line-through; opacity: 0.5; background-color: #f3f4f6; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen pb-20">
+    <div class="max-w-md mx-auto p-4">
+        <header class="flex justify-between items-center mb-6 py-4">
+            <h1 class="text-xl font-bold text-pink-600">VGGC List</h1>
+            <span id="sync-status" class="text-[10px] px-2 py-1 bg-green-100 text-green-600 rounded-full">Synced</span>
+        </header>
+
+        <div class="bg-white rounded-2xl shadow-sm p-4 mb-6 space-y-3">
+            <input id="circle" type="text" placeholder="サークル/配置番号" class="w-full border-none bg-gray-100 p-3 rounded-xl focus:ring-2 focus:ring-pink-400">
+            <input id="item" type="text" placeholder="アイテム名" class="w-full border-none bg-gray-100 p-3 rounded-xl focus:ring-2 focus:ring-pink-400">
+            <input id="price" type="number" placeholder="価格" class="w-full border-none bg-gray-100 p-3 rounded-xl focus:ring-2 focus:ring-pink-400">
+            <button onclick="addItem()" class="w-full bg-pink-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-pink-200">追加する</button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="bg-white p-4 rounded-2xl shadow-sm text-center">
+                <p class="text-xs text-gray-500">合計予算</p>
+                <p class="text-lg font-bold text-gray-800">¥<span id="total-price">0</span></p>
+            </div>
+            <div class="bg-white p-4 rounded-2xl shadow-sm text-center">
+                <p class="text-xs text-gray-500">未購入</p>
+                <p class="text-lg font-bold text-gray-800"><span id="pending-count">0</span>点</p>
+            </div>
+        </div>
+
+        <ul id="shopping-list" class="space-y-3"></ul>
+        
+        <div class="mt-8 flex justify-center gap-6">
+            <button onclick="copyShareUrl()" class="text-sm text-blue-500 font-medium">リストを共有/同期</button>
+            <button onclick="allClear()" class="text-sm text-red-400 font-medium">全消去</button>
+        </div>
+    </div>
+
+    <script>
+        let items = [];
+        let userId = new URLSearchParams(window.location.search).get('id') || localStorage.getItem('vggc_userid');
+
+        if (!userId) {
+            userId = 'u-' + Math.random().toString(36).substring(2, 11);
+            localStorage.setItem('vggc_userid', userId);
+        }
+        
+        // URLにIDを固定
+        if (!window.location.search.includes(userId)) {
+            window.history.replaceState(null, '', `?id=${userId}`);
+        }
+
+        async function syncData(method = 'GET', body = null) {
+            const statusEl = document.getElementById('sync-status');
+            statusEl.innerText = 'Syncing...';
+            statusEl.className = 'text-[10px] px-2 py-1 bg-yellow-100 text-yellow-600 rounded-full';
+
+            const options = { method };
+            if (body) {
+                options.body = JSON.stringify(body);
+                options.headers = { 'Content-Type': 'application/json' };
+            }
+
+            try {
+                const res = await fetch(`/api/manage?userId=${userId}`, options);
+                if (method === 'GET') items = await res.json();
+                render();
+                statusEl.innerText = 'Synced';
+                statusEl.className = 'text-[10px] px-2 py-1 bg-green-100 text-green-600 rounded-full';
+            } catch (e) {
+                statusEl.innerText = 'Offline';
+                statusEl.className = 'text-[10px] px-2 py-1 bg-red-100 text-red-600 rounded-full';
+            }
+        }
+
+        function addItem() {
+            const circle = document.getElementById('circle').value;
+            const item = document.getElementById('item').value;
+            const price = parseInt(document.getElementById('price').value) || 0;
+            if (!item) return;
+
+            items.push({ circle, item, price, bought: false, id: Date.now() });
+            document.getElementById('circle').value = '';
+            document.getElementById('item').value = '';
+            document.getElementById('price').value = '';
+            syncData('POST', items);
+        }
+
+        function toggleBought(id) {
+            items = items.map(i => i.id === id ? { ...i, bought: !i.bought } : i);
+            syncData('POST', items);
+        }
+
+        function allClear() {
+            if(confirm("データをすべて消去しますか？")) {
+                items = [];
+                syncData('POST', items);
+            }
+        }
+
+        function copyShareUrl() {
+            navigator.clipboard.writeText(window.location.href);
+            alert("自分専用の同期URLをコピーしました。他の端末で開くと同期できます！");
+        }
+
+        function render() {
+            const listEl = document.getElementById('shopping-list');
+            listEl.innerHTML = '';
+            let total = 0, pending = 0;
+
+            items.forEach(i => {
+                total += i.price;
+                if (!i.bought) pending++;
+
+                const li = document.createElement('li');
+                li.className = `flex items-center justify-between p-4 rounded-2xl shadow-sm transition-all ${i.bought ? 'bought' : 'bg-white'}`;
+                li.innerHTML = `
+                    <div onclick="toggleBought(${i.id})" class="flex-1 cursor-pointer">
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">${i.circle || 'FREE'}</div>
+                        <div class="font-bold text-gray-800">${i.item}</div>
+                        <div class="text-sm font-semibold text-pink-500">¥${i.price.toLocaleString()}</div>
+                    </div>
+                    <input type="checkbox" ${i.bought ? 'checked' : ''} onchange="toggleBought(${i.id})" class="w-6 h-6 rounded-full accent-pink-500">
+                `;
+                listEl.appendChild(li);
+            });
+
+            document.getElementById('total-price').innerText = total.toLocaleString();
+            document.getElementById('pending-count').innerText = pending;
+        }
+
+        // 初期読み込み
+        syncData();
+    </script>
+</body>
+</html>
