@@ -3,218 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vspo! Goods Catalog</title>
+    <title>Vspo! Multi-User Organizer</title>
     <style>
-        :root {
-            --vspo-pink: #ff69b4;
-            --vspo-blue: #00bfff;
-            --bg-color: #f8f9fa;
-            --card-bg: #ffffff;
+        :root { --vspo-pink: #ff69b4; --vspo-blue: #00bfff; }
+        body { font-family: sans-serif; background: #f0f2f5; margin: 0; padding: 20px 20px 120px 20px; }
+        
+        /* ID管理ヘッダー */
+        .user-session {
+            background: #333; color: white; padding: 10px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-radius: 8px; margin-bottom: 20px;
         }
+        .user-id-display { font-weight: bold; color: var(--vspo-pink); }
 
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: var(--bg-color);
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        /* 検索・フィルターエリア */
         .controls {
-            max-width: 1000px;
-            margin: 0 auto 30px;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            max-width: 1100px; margin: 0 auto 20px;
+            display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px;
         }
+        @media (max-width: 600px) { .controls { grid-template-columns: 1fr; } }
 
-        .controls input, .controls select {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            flex: 1;
-            min-width: 200px;
-        }
-
-        /* グリッドレイアウト */
-        .item-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* カードデザイン */
+        .item-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
+        
         .item-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            overflow: hidden;
-            transition: transform 0.3s ease;
-            border-bottom: 4px solid var(--vspo-pink);
+            background: white; border-radius: 12px; padding: 15px; position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); cursor: pointer; border: 2px solid transparent;
         }
+        .item-card.selected { border-color: var(--vspo-pink); background: #fff9fc; }
+        
+        .circle-num { font-size: 0.8rem; background: #eee; padding: 2px 6px; border-radius: 4px; }
+        .item-price { color: var(--vspo-pink); font-weight: bold; font-size: 1.2rem; margin-top: 10px; }
 
-        .item-card:hover {
-            transform: translateY(-8px);
-        }
-
-        .item-content {
-            padding: 20px;
-        }
-
-        .circle-info {
-            font-size: 0.85rem;
-            color: #777;
-            font-weight: bold;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .item-type {
-            display: inline-block;
-            background: #f0f0f0;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            margin-bottom: 10px;
-        }
-
-        .item-name {
-            font-size: 1.1rem;
-            margin: 0 0 15px 0;
-            height: 3em;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-        }
-
-        .item-price {
-            font-size: 1.4rem;
-            color: var(--vspo-pink);
-            font-weight: 900;
-            text-align: right;
-        }
-
-        /* 統計情報の表示 */
-        .stats {
-            text-align: center;
-            margin-bottom: 15px;
-            font-size: 0.9rem;
-            color: #666;
+        .total-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: white; border-top: 2px solid var(--vspo-pink);
+            padding: 15px; display: flex; justify-content: center; gap: 20px; align-items: center;
+            z-index: 100; box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>VGGC非公式お買い物リスト</h1>
-    <div class="stats" id="stats-display">読み込み中...</div>
-</header>
+<div class="user-session" id="user-area">
+    <div>👤 User: <span id="display-user-id" class="user-id-display">未設定</span></div>
+    <button onclick="changeUser()" style="cursor:pointer">ID切替</button>
+</div>
 
 <div class="controls">
-    <input type="text" id="search-input" placeholder="サークル名・グッズ名・スペース番号で検索...">
-    <select id="type-filter">
-        <option value="">すべての種別</option>
-        </select>
+    <input type="text" id="search-input" placeholder="検索...">
+    <select id="type-filter"><option value="">すべて</option></select>
+    <select id="sort-order">
+        <option value="num-asc">サークル番号順</option>
+        <option value="price-asc">安い順</option>
+        <option value="price-desc">高い順</option>
+    </select>
 </div>
 
 <div id="catalog-container" class="item-grid"></div>
 
+<div class="total-bar">
+    <b>合計: ¥<span id="total-amount">0</span></b>
+    <small>(<span id="item-count">0</span> 点)</small>
+    <button onclick="clearList()">リセット</button>
+</div>
+
 <script>
     let catalogData = [];
+    let currentUserId = "guest";
+    let wishlist = new Set();
 
-    // データの読み込み
+    // 初期化
     async function init() {
-        try {
-            const response = await fetch('catalog.json');
-            catalogData = await response.json();
-            
-            setupFilters();
-            render(catalogData);
-        } catch (error) {
-            document.getElementById('catalog-container').innerHTML = "<p>データの読み込みに失敗しました。</p>";
-        }
+        // 1. IDの確認
+        currentUserId = localStorage.getItem('vspo_last_user') || prompt("利用するIDを入力してください (例: ひなの推し)", "guest") || "guest";
+        localStorage.setItem('vspo_last_user', currentUserId);
+        document.getElementById('display-user-id').textContent = currentUserId;
+
+        // 2. データの取得
+        const res = await fetch('catalog.json');
+        catalogData = await res.json();
+        
+        // 3. ウィッシュリストの復元
+        loadWishlist();
+        
+        // 4. 種別フィルター作成
+        const types = [...new Set(catalogData.map(d => d.type))];
+        types.forEach(t => document.getElementById('type-filter').innerHTML += `<option value="${t}">${t}</option>`);
+
+        applySort();
+        render();
     }
 
-    // フィルター選択肢の自動生成
-    function setupFilters() {
-        const types = [...new Set(catalogData.map(item => item.type))];
-        const filter = document.getElementById('type-filter');
-        types.forEach(type => {
-            if (type) {
-                const opt = document.createElement('option');
-                opt.value = type;
-                opt.textContent = type;
-                filter.appendChild(opt);
-            }
-        });
+    // データの保存・読み込み
+    function saveWishlist() {
+        localStorage.setItem(`wishlist_${currentUserId}`, JSON.stringify(Array.from(wishlist)));
+    }
+    function loadWishlist() {
+        const saved = localStorage.getItem(`wishlist_${currentUserId}`);
+        wishlist = new Set(saved ? JSON.parse(saved) : []);
     }
 
-    // カードの描画
-    function render(data) {
+    function render() {
+        const search = document.getElementById('search-input').value.toLowerCase();
+        const type = document.getElementById('type-filter').value;
         const container = document.getElementById('catalog-container');
-        const stats = document.getElementById('stats-display');
-        
-        stats.textContent = `現在 ${data.length} 件のアイテムを表示中`;
-        
-        if (data.length === 0) {
-            container.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>該当するアイテムが見つかりませんでした。</p>";
-            return;
-        }
 
-        container.innerHTML = data.map(item => `
-            <div class="item-card">
-                <div class="item-content">
-                    <div class="circle-info">
-                        <span>📍 ${item.num || '---'}</span>
-                        <span>${item.circle || '不明なサークル'}</span>
-                    </div>
-                    <span class="item-badge item-type">${item.type}</span>
-                    <h3 class="item-name">${item.item}</h3>
-                    <div class="item-price">¥${(item.price || 0).toLocaleString()}</div>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    // 検索・フィルタリングのロジック
-    function filterData() {
-        const searchText = document.getElementById('search-input').value.toLowerCase();
-        const selectedType = document.getElementById('type-filter').value;
-
-        const filtered = catalogData.filter(item => {
-            const matchesSearch = (
-                (item.circle && item.circle.toLowerCase().includes(searchText)) ||
-                (item.item && item.item.toLowerCase().includes(searchText)) ||
-                (item.num && item.num.toLowerCase().includes(searchText))
-            );
-            const matchesType = selectedType === "" || item.type === selectedType;
-            return matchesSearch && matchesType;
+        const filtered = catalogData.filter(d => {
+            return (!type || d.type === type) && 
+                   (!search || d.item.toLowerCase().includes(search) || d.circle.toLowerCase().includes(search) || d.num.toLowerCase().includes(search));
         });
 
-        render(filtered);
+        container.innerHTML = filtered.map(d => {
+            const key = `${d.circle}_${d.item}`;
+            const selected = wishlist.has(key);
+            return `
+                <div class="item-card ${selected ? 'selected' : ''}" onclick="toggleItem('${key}')">
+                    <span class="circle-num">${d.num || '??'}</span> ${d.circle}
+                    <div style="margin: 8px 0; font-weight:bold">${d.item}</div>
+                    <div class="item-price">¥${(d.price || 0).toLocaleString()}</div>
+                </div>
+            `;
+        }).join('');
+
+        updateTotal();
     }
 
-    // イベントリスナー
-    document.getElementById('search-input').addEventListener('input', filterData);
-    document.getElementById('type-filter').addEventListener('change', filterData);
+    function toggleItem(key) {
+        if (wishlist.has(key)) wishlist.delete(key);
+        else wishlist.add(key);
+        saveWishlist();
+        render();
+    }
+
+    function updateTotal() {
+        let total = 0;
+        catalogData.forEach(d => {
+            if (wishlist.has(`${d.circle}_${d.item}`)) total += (d.price || 0);
+        });
+        document.getElementById('total-amount').textContent = total.toLocaleString();
+        document.getElementById('item-count').textContent = wishlist.size;
+    }
+
+    function applySort() {
+        const order = document.getElementById('sort-order').value;
+        catalogData.sort((a, b) => {
+            if (order === 'num-asc') return (a.num || "").localeCompare(b.num || "", undefined, {numeric: true});
+            if (order === 'price-asc') return a.price - b.price;
+            return b.price - a.price;
+        });
+    }
+
+    function changeUser() {
+        const newId = prompt("切り替えるIDを入力してください", currentUserId);
+        if (newId) {
+            localStorage.setItem('vspo_last_user', newId);
+            location.reload();
+        }
+    }
+
+    function clearList() {
+        if (confirm("リストを空にしますか？")) {
+            wishlist.clear();
+            saveWishlist();
+            render();
+        }
+    }
+
+    document.getElementById('search-input').addEventListener('input', render);
+    document.getElementById('type-filter').addEventListener('change', render);
+    document.getElementById('sort-order').addEventListener('change', () => { applySort(); render(); });
 
     init();
 </script>
-
 </body>
 </html>
