@@ -64,28 +64,28 @@
   },
   {
     "num": "H-03",
-    "circle": "どーなっつー",
+    "circle": "ぐーすかぴー",
     "type": "セット",
     "item": "ジャージメイドセット",
     "price": 1500
   },
   {
     "num": "H-03",
-    "circle": "どーなっつー",
+    "circle": "ぐーすかぴー",
     "type": "セット",
     "item": "チェキ＆ステッカーセット",
     "price": 1000
   },
   {
     "num": "H-03",
-    "circle": "どーなっつー",
+    "circle": "ぐーすかぴー",
     "type": "セット",
     "item": "VGGC10thセット",
     "price": 800
   },
   {
     "num": "H-03",
-    "circle": "どーなっつー",
+    "circle": "ぐーすかぴー",
     "type": "その他",
     "item": "豆色紙",
     "price": 1000
@@ -126,42 +126,42 @@
     "price": 2500
   },
   {
-    "num": "ふ-11",
+    "num": "J-11",
     "circle": "GUN",
     "type": "アクスタ",
     "item": "のせすみアクリルスタンド",
     "price": 800
   },
   {
-    "num": "ふ-11",
+    "num": "J-11",
     "circle": "GUN",
     "type": "アクキー",
     "item": "すみれみてみて!アクリルキーホルダー",
     "price": 700
   },
   {
-    "num": "ふ-11",
+    "num": "J-11",
     "circle": "GUN",
     "type": "その他",
     "item": "すみれー圧ーマグネット&シール",
     "price": 300
   },
   {
-    "num": "ふ-11",
+    "num": "J-11",
     "circle": "GUN",
     "type": "その他",
     "item": "すみれードヤーマグネット&シール",
     "price": 300
   },
   {
-    "num": "ふ-11",
+    "num": "J-11",
     "circle": "GUN",
     "type": "缶バッジ",
     "item": "缶バッジ",
     "price": 100
   },
   {
-    "num": "ふ-11",
+    "num": "J-11",
     "circle": "GUN",
     "type": "その他",
     "item": "先着4名 直筆キャンバスアート",
@@ -169,77 +169,70 @@
   },
   {
     "num": "K-39",
-    "circle": "らと",
+    "circle": "にょらと",
     "type": "写真集",
     "item": "紡木こかげ写真集「SPARKLE」",
     "price": 1000
   },
   {
     "num": "K-39",
-    "circle": "らと",
+    "circle": "にょらと",
     "type": "アクスタ",
     "item": "アクリルスタンド",
     "price": 1000
   },
   {
     "num": "K-39",
-    "circle": "らと",
+    "circle": "にょらと",
     "type": "セット",
     "item": "トレカ３枚セット",
     "price": 100
   },
   {
     "num": "K-39",
-    "circle": "らと",
+    "circle": "にょらと",
     "type": "その他",
     "item": "にょらと ステッカー＆ポストカード",
     "price": 300
   },
   {
     "num": "K-39",
-    "circle": "らと",
+    "circle": "にょらと",
     "type": "その他",
     "item": "チェキ 紡木こかげ",
     "price": 500
   },
   {
-    "num": "K-39",
-    "circle": "らと",
-    "type": "セット",
-    "item": "①②③セット（特典：アクリルキーホルダー付き）",
-    "price": 2100
-  },
-  {
-    "num": "F29-30",
-    "circle": "",
+    "num": "F-29-30",
+    "circle": "Ubiquitin",
     "type": "アクスタ",
     "item": "アクスタ（オーロラ加工）",
     "price": 2000
   },
   {
-    "num": "F29-30",
-    "circle": "",
+    "num": "F-29-30",
+    "circle": "Ubiquitin",
     "type": "アクスタ",
     "item": "アクスタ",
     "price": 1500
   },
   {
-    "num": "F29-30",
-    "circle": "",
+    "num": "F-29-30",
+    "circle": "Ubiquitin",
     "type": "イラスト本",
     "item": "新刊「ぶいすぽっ！すけっち」",
     "price": 1000
   },
   {
-    "num": "F29-30",
-    "circle": "",
+    "num": "F-29-30",
+    "circle": "Ubiquitin",
     "type": "イラスト本",
     "item": "既刊「CUTE」",
     "price": 500
   },
   {
-    "num": "F29-30",
-    "circle": "",
+    "num": "F-29-30",
+    "circle": "Ubiquitin",
     "type": "その他",
     "item": "タペストリー",
     "price": 3000
@@ -322,50 +315,50 @@
     "price": 2500
   },
   {
-    "num": "C15-16",
-    "circle": "BIG STAR",
+    "num": "C-15-16",
+    "circle": "こへ屋",
     "type": "その他",
     "item": "BIG T-シャツ",
     "price": 3000
   },
   {
-    "num": "C15-16",
-    "circle": "BIG STAR",
+    "num": "C-15-16",
+    "circle": "こへ屋",
     "type": "アクスタ",
     "item": "BIGアクスタ",
     "price": 2000
   },
   {
-    "num": "C15-16",
-    "circle": "BIG STAR",
+    "num": "C-15-16",
+    "circle": "こへ屋",
     "type": "その他",
     "item": "うるはシール",
     "price": 200
   },
   {
-    "num": "C15-16",
-    "circle": "BIG STAR",
+    "num": "C-15-16",
+    "circle": "こへ屋",
     "type": "イラスト本",
     "item": "ラーメン亭 しのみや 1, 2",
     "price": 500
   },
   {
-    "num": "C15-16",
-    "circle": "BIG STAR",
+    "num": "C-15-16",
+    "circle": "こへ屋",
     "type": "イラスト本",
     "item": "魔法少女 マジカルひなの",
     "price": 500
   },
   {
-    "num": "C15-16",
-    "circle": "BIG STAR",
+    "num": "C-15-16",
+    "circle": "こへ屋",
     "type": "イラスト本",
     "item": "すー屋",
     "price": 500
   },
   {
-    "num": "C15-16",
-    "circle": "BIG STAR",
+    "num": "C-15-16",
+    "circle": "こへ屋",
     "type": "その他",
     "item": "すーT",
     "price": 2000
@@ -385,28 +378,28 @@
     "price": 1500
   },
   {
-    "num": "A-05.06",
+    "num": "A-05-06",
     "circle": "ねこみみぱれっと",
     "type": "セット",
     "item": "ラフ本セット",
     "price": 4500
   },
   {
-    "num": "A-05.06",
+    "num": "A-05-06",
     "circle": "ねこみみぱれっと",
     "type": "アクスタ",
     "item": "バレンタインひなの アクリルスタンド",
     "price": 1500
   },
   {
-    "num": "A-05.06",
+    "num": "A-05-06",
     "circle": "ねこみみぱれっと",
     "type": "アクスタ",
     "item": "バレンタインつな アクリルスタンド",
     "price": 1500
   },
   {
-    "num": "A-05.06",
+    "num": "A-05-06",
     "circle": "ねこみみぱれっと",
     "type": "アクスタ",
     "item": "部屋着ひなの アクリルスタンド",
@@ -441,36 +434,36 @@
     "price": 1000
   },
   {
-    "num": "VGGC11th K-39",
-    "circle": "にょる",
+    "num": "K-39",
+    "circle": "にょらと",
     "type": "写真集",
     "item": "のせめと写真集 「Coin!」",
     "price": 1000
   },
   {
-    "num": "VGGC11th K-39",
-    "circle": "にょる",
+    "num": "K-39",
+    "circle": "にょらと",
     "type": "写真集",
     "item": "くろむ写真集 「Psst,」",
     "price": 1000
   },
   {
-    "num": "VGGC11th K-39",
-    "circle": "にょる",
+    "num": "K-39",
+    "circle": "にょらと",
     "type": "イラスト本",
     "item": "めと豆本 「みにめとっ！」",
     "price": 1000
   },
   {
-    "num": "VGGC11th K-39",
-    "circle": "にょる",
+    "num": "K-39",
+    "circle": "にょらと",
     "type": "その他",
     "item": "チェキ",
     "price": 200
   },
   {
-    "num": "VGGC11th K-39",
-    "circle": "にょる",
+    "num": "K-39",
+    "circle": "にょらと",
     "type": "セット",
     "item": "にょらとセット",
     "price": 300
@@ -504,56 +497,56 @@
     "price": 1500
   },
   {
-    "num": "エー37",
+    "num": "I-37",
     "circle": "はむたまご",
     "type": "セット",
     "item": "NEW お守り風アクキー＆金ぴかねこたつステッカー",
     "price": 600
   },
   {
-    "num": "エー37",
+    "num": "I-37",
     "circle": "はむたまご",
     "type": "セット",
     "item": "NEW フェスねこたつステッカーセット",
     "price": 500
   },
   {
-    "num": "エー37",
+    "num": "I-37",
     "circle": "はむたまご",
     "type": "その他",
     "item": "NEW ランダムアンブレラマーカー",
     "price": 500
   },
   {
-    "num": "エー37",
+    "num": "I-37",
     "circle": "はむたまご",
     "type": "その他",
     "item": "前回のステッカー（単品）",
     "price": 100
   },
   {
-    "num": "エー37",
+    "num": "I-37",
     "circle": "はむたまご",
     "type": "アクスタ",
     "item": "ジャージメイドねこたつ アクスタ",
     "price": 1500
   },
   {
-    "num": "エー37",
+    "num": "I-37",
     "circle": "はむたまご",
     "type": "その他",
     "item": "ジャージメイドねこたつ プレート",
     "price": 2000
   },
   {
-    "num": "エー37",
+    "num": "I-37",
     "circle": "はむたまご",
     "type": "イラスト本",
     "item": "既刊 ふぁすと! ツインテール",
     "price": 1000
   },
   {
-    "num": "エー37",
+    "num": "I-37",
     "circle": "はむたまご",
     "type": "セット",
     "item": "缶バッチセット",
@@ -561,28 +554,28 @@
   },
   {
     "num": "I-05",
-    "circle": "記載なし",
+    "circle": "みのってけ！！！",
     "type": "写真集",
     "item": "小森めとコスプレ写真集",
     "price": 1000
   },
   {
     "num": "I-05",
-    "circle": "記載なし",
+    "circle": "みのってけ！！！",
     "type": "その他",
     "item": "vol.2 舎弟クリアポーチ",
     "price": 1000
   },
   {
     "num": "I-05",
-    "circle": "記載なし",
+    "circle": "みのってけ！！！",
     "type": "その他",
     "item": "ポストカード",
     "price": 200
   },
   {
     "num": "I-05",
-    "circle": "記載なし",
+    "circle": "みのってけ！！！",
     "type": "セット",
     "item": "チェキ風カード",
     "price": 500
@@ -602,7 +595,7 @@
     "price": 500
   },
   {
-    "num": "VGGC D28",
+    "num": "D-28",
     "circle": "LOW LOVE",
     "type": "アクスタ",
     "item": "フレーム付きアクリルスタンド",
@@ -630,21 +623,21 @@
     "price": 1000
   },
   {
-    "num": "C03",
+    "num": "C-03",
     "circle": "呉よん",
-    "type": "その他",
+    "type": "イラスト本",
     "item": "Sketchbook",
     "price": 500
   },
   {
-    "num": "C03",
+    "num": "C-03",
     "circle": "呉よん",
     "type": "その他",
     "item": "MobileBattery",
     "price": 3000
   },
   {
-    "num": "C03",
+    "num": "C-03",
     "circle": "呉よん",
     "type": "その他",
     "item": "Shikishi",
@@ -679,71 +672,64 @@
     "price": 500
   },
   {
-    "num": "A 25-26",
+    "num": "A-25-26",
     "circle": "UMAGOYA",
     "type": "セット",
     "item": "CARD SET",
     "price": 3000
   },
   {
-    "num": "A 25-26",
+    "num": "A-25-26",
     "circle": "UMAGOYA",
     "type": "その他",
     "item": "Trump Card",
     "price": 2000
   },
   {
-    "num": "A 25-26",
+    "num": "A-25-26",
     "circle": "UMAGOYA",
     "type": "イラスト本",
     "item": "新刊 B6 52p 『STAY GOLD』",
     "price": 1000
   },
   {
-    "num": "A 25-26",
-    "circle": "UMAGOYA",
-    "type": "アクスタ",
-    "item": "トワつなアクスタ",
-    "price": null
-  },
-  {
-    "num": "A 25-26",
+    "num": "A-25-26",
     "circle": "UMAGOYA",
     "type": "アクスタ",
     "item": "BIG★STAR／OREAPO AcrylicStand",
     "price": 1000
   },
   {
-    "num": null,
-    "circle": null,
+    "num": "A-05-06",
+    "circle": "ねこみみぱれっと",
     "type": "その他",
     "item": "ひなのフルグラ法被",
     "price": 8500
   },
   {
-    "num": null,
-    "circle": null,
+    "num": "A-05-06",
+    "circle": "ねこみみぱれっと",
     "type": "その他",
     "item": "等身大タペストリー",
     "price": 8000
   },
   {
-    "num": null,
-    "circle": null,
+    "num": "A-05-06",
+    "circle": "ねこみみぱれっと",
     "type": "その他",
     "item": "B2タペストリー",
     "price": 3000
   },
   {
-    "num": null,
-    "circle": null,
+    "num": "A-05-06",
+    "circle": "ねこみみぱれっと",
     "type": "その他",
     "item": "直筆色紙（中サイズ）",
     "price": 5000
   },
   {
-    "num": null,
-    "circle": null,
+    "num": "A-05-06",
+    "circle": "ねこみみぱれっと",
     "type": "その他",
     "item": "直筆色紙（大サイズ）",
     "price": 8000
@@ -770,22 +756,22 @@
     "price": 3000
   },
   {
-    "num": "",
-    "circle": "",
+    "num": "H-30",
+    "circle": "小春色の栞",
     "type": "その他",
     "item": "ステッカー4種",
     "price": 500
   },
   {
-    "num": "",
-    "circle": "",
+    "num": "H-30",
+    "circle": "小春色の栞",
     "type": "アクスタ",
     "item": "アクリルスタンド",
     "price": 2000
   },
   {
-    "num": "",
-    "circle": "",
+    "num": "H-30",
+    "circle": "小春色の栞",
     "type": "その他",
     "item": "A4タペストリー",
     "price": 1500
@@ -812,15 +798,15 @@
     "price": 2000
   },
   {
-    "num": "VGGC11th C-27",
-    "circle": "",
+    "num": "C-27",
+    "circle": "透明プラスチック",
     "type": "アクキー",
     "item": "アクリルキーホルダー だこちて!!",
     "price": 500
   },
   {
-    "num": "VGGC11th C-27",
-    "circle": "",
+    "num": "C-27",
+    "circle": "透明プラスチック",
     "type": "アクスタ",
     "item": "アクリルスタンド",
     "price": 700
@@ -917,15 +903,15 @@
     "price": 2000
   },
   {
-    "num": "2",
-    "circle": "OLD",
+    "num": "J-23",
+    "circle": "どんのしっぽ屋",
     "type": "アクスタ",
     "item": "アクリルスタンド 橘ひなの",
     "price": 1500
   },
   {
-    "num": "2",
-    "circle": "OLD",
+    "num": "J-23",
+    "circle": "どんのしっぽ屋",
     "type": "アクスタ",
     "item": "アクリルスタンド 英リサ",
     "price": 1500
@@ -1092,63 +1078,63 @@
     "price": 1000
   },
   {
-    "num": "J33-34",
+    "num": "J-33-34",
     "circle": "ヌラリ NULLARY",
     "type": "アクキー",
     "item": "アクリルキーホルダー",
     "price": 1000
   },
   {
-    "num": "J33-34",
+    "num": "J-33-34",
     "circle": "ヌラリ NULLARY",
     "type": "アクスタ",
     "item": "BIGアクリルスタンド",
     "price": 6000
   },
   {
-    "num": "J33-34",
+    "num": "J-33-34",
     "circle": "ヌラリ NULLARY",
     "type": "その他",
     "item": "パスケース",
     "price": 2000
   },
   {
-    "num": "J33-34",
+    "num": "J-33-34",
     "circle": "ヌラリ NULLARY",
     "type": "イラスト本",
     "item": "イラスト本",
     "price": 1000
   },
   {
-    "num": "J33-34",
+    "num": "J-33-34",
     "circle": "ヌラリ NULLARY",
     "type": "アクキー",
     "item": "プリンキーホルダー",
     "price": 1000
   },
   {
-    "num": "J33-34",
+    "num": "J-33-34",
     "circle": "ヌラリ NULLARY",
     "type": "その他",
     "item": "クリアキーキャップ 3点セット ひなの",
     "price": 2000
   },
   {
-    "num": "J33-34",
+    "num": "J-33-34",
     "circle": "ヌラリ NULLARY",
     "type": "その他",
     "item": "クリアキーキャップ 3点セット つな",
     "price": 2000
   },
   {
-    "num": "J33-34",
+    "num": "J-33-34",
     "circle": "ヌラリ NULLARY",
     "type": "その他",
     "item": "抱き枕カバー",
     "price": 12000
   },
   {
-    "num": "J33-34",
+    "num": "J-33-34",
     "circle": "ヌラリ NULLARY",
     "type": "その他",
     "item": "トートバッグ",
@@ -1202,12 +1188,5 @@
     "type": "その他",
     "item": "無配ポストカード(会場限定)",
     "price": 0
-  },
-  {
-    "num": "G-18",
-    "circle": "あさにおやすみ",
-    "type": "その他",
-    "item": "豆・中・大色紙",
-    "price": null
   }
 ]
