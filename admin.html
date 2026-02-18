@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Circuit Master</title>
+    <title>Admin - AI Smart Scan</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen p-4 pb-24 font-sans">
@@ -11,90 +11,95 @@
             <h1 class="text-xl font-black text-pink-500 uppercase tracking-widest">Master Admin</h1>
         </header>
 
-        <section class="bg-slate-800 rounded-3xl p-6 mb-6 shadow-2xl border border-slate-700">
-            <h2 class="text-[10px] font-black text-pink-400 uppercase tracking-widest mb-4">Bulk Register</h2>
-            <p class="text-[9px] text-slate-500 mb-2">配置,サークル,種類,商品名,価格 (改行で複数)</p>
-            <textarea id="bulk-input" rows="3" placeholder="A-01a,サークル名,新刊,タイトル,500" class="w-full bg-slate-700 border-none p-4 rounded-2xl text-xs text-slate-100 mb-3 focus:ring-2 focus:ring-pink-500"></textarea>
-            <button onclick="addBulk()" class="w-full bg-slate-700 hover:bg-slate-600 font-bold py-3 rounded-2xl text-xs transition-all">一括追加実行</button>
-        </section>
-
-        <section class="bg-slate-800 rounded-3xl p-6 mb-8 border border-slate-700">
-            <h2 class="text-[10px] font-black text-slate-400 mb-4 uppercase">Single Register</h2>
-            <div class="space-y-3">
-                <div class="grid grid-cols-2 gap-2">
-                    <input id="c-num" type="text" placeholder="配置番号" class="bg-slate-700 border-none p-3 rounded-xl text-sm">
-                    <input id="c-type" type="text" placeholder="種類 (新刊等)" class="bg-slate-700 border-none p-3 rounded-xl text-sm">
-                </div>
-                <input id="c-circle" type="text" placeholder="サークル名" class="w-full bg-slate-700 border-none p-3 rounded-xl text-sm">
-                <input id="c-item" type="text" placeholder="商品名" class="w-full bg-slate-700 border-none p-3 rounded-xl text-sm">
-                <input id="c-price" type="number" placeholder="価格" class="w-full bg-slate-700 border-none p-3 rounded-xl text-sm">
-                <input id="c-image" type="file" accept="image/*" class="w-full text-[10px] text-slate-500">
-                <button onclick="addSingle()" class="w-full bg-pink-600 font-black py-4 rounded-2xl shadow-xl active:scale-95 transition-all">追加</button>
+        <section class="bg-slate-800 rounded-3xl p-6 mb-8 shadow-2xl border-2 border-pink-500/20">
+            <h2 class="text-[10px] font-black text-pink-500 uppercase tracking-widest mb-4">AI Auto Scan (High Speed)</h2>
+            <div class="space-y-4">
+                <input id="ai-image" type="file" accept="image/*" class="hidden" onchange="handleAiScan(this)">
+                <label for="ai-image" class="block w-full bg-pink-600 hover:bg-pink-500 text-center py-5 rounded-2xl cursor-pointer font-black text-sm transition-all shadow-lg shadow-pink-900/40">
+                    お品書き画像をスキャン
+                </label>
+                <div id="ai-loading" class="hidden text-center text-[10px] text-pink-400 animate-pulse font-bold tracking-widest">AI解析中... しばらくお待ちください</div>
             </div>
         </section>
+
+        <details class="mb-8 group">
+            <summary class="text-[10px] font-bold text-slate-500 cursor-pointer uppercase tracking-widest text-center group-open:mb-4">手動登録 / 一括テキスト登録を表示</summary>
+            <div class="bg-slate-800/50 rounded-2xl p-4 border border-slate-700 space-y-4">
+                <textarea id="bulk-input" rows="2" placeholder="配置,サークル,種類,品名,価格" class="w-full bg-slate-700 border-none p-3 rounded-xl text-[10px]"></textarea>
+                <button onclick="addBulk()" class="w-full bg-slate-700 py-2 rounded-xl text-[10px] font-bold uppercase">テキスト追加</button>
+            </div>
+        </details>
 
         <div id="catalog-list" class="space-y-3"></div>
     </div>
 
     <script>
         let catalog = [];
-        async function compressImage(file) {
-            return new Promise(r => {
-                const rd = new FileReader(); rd.onload = e => {
-                    const img = new Image(); img.onload = () => {
-                        const canvas = document.createElement('canvas'); const MAX = 400; let w = img.width, h = img.height;
-                        if(w > MAX){ h *= MAX/w; w = MAX; } canvas.width = w; canvas.height = h;
-                        canvas.getContext('2d').drawImage(img, 0, 0, w, h); r(canvas.toDataURL('image/jpeg', 0.6));
-                    }; img.src = e.target.result;
-                }; rd.readAsDataURL(file);
-            });
-        }
-
-        async function api(method='GET', data=null) {
+        async function api(method='GET', type='catalog', data=null) {
             const pass = localStorage.getItem('vggc_admin_pass');
-            const res = await fetch(`/api/manage?type=catalog`, {
+            const res = await fetch(`/api/manage?type=${type}`, {
                 method, headers: {'Content-Type': 'application/json', 'x-admin-password': pass || ''},
                 body: data ? JSON.stringify(data) : null
             });
             if (res.status === 403) {
-                const p = prompt("Admin Password:"); if(p) { localStorage.setItem('vggc_admin_pass', p); return api(method, data); }
+                const p = prompt("Password:"); if(p) { localStorage.setItem('vggc_admin_pass', p); return api(method, type, data); }
             }
             return res.json();
         }
 
-        async function init() { catalog = await api('GET'); render(); }
+        async function handleAiScan(input) {
+            if(!input.files[0]) return;
+            const loading = document.getElementById('ai-loading');
+            loading.classList.remove('hidden');
+
+            try {
+                // 【413エラー対策】ブラウザ側で画像を劇的にリサイズ・圧縮
+                const compressedBase64 = await new Promise(r => {
+                    const rd = new FileReader();
+                    rd.onload = e => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            const MAX = 800; let w = img.width, h = img.height;
+                            if(w > MAX){ h *= MAX/w; w = MAX; }
+                            canvas.width = w; canvas.height = h;
+                            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                            r(canvas.toDataURL('image/jpeg', 0.5).split(',')[1]);
+                        };
+                        img.src = e.target.result;
+                    };
+                    rd.readAsDataURL(input.files[0]);
+                });
+
+                const res = await api('POST', 'dify', { image: compressedBase64 });
+                const json = JSON.parse(res.answer.match(/\[.*\]/s)[0]);
+                catalog = [...catalog, ...json.map(i => ({...i, id: Date.now()+Math.random()}))];
+                await api('POST', 'catalog', catalog);
+                render();
+                alert(`${json.length}件を自動追加しました！`);
+            } catch(e) { alert("スキャン失敗：画像を縮小して再試行してください"); }
+            finally { loading.classList.add('hidden'); input.value=''; }
+        }
 
         async function addBulk() {
             const text = document.getElementById('bulk-input').value.trim(); if(!text) return;
-            const newItems = text.split('\n').map(line => {
-                const [num, circle, type, item, price] = line.split(',').map(s => s.trim());
-                return { id: Date.now() + Math.random(), num, circle, type, item, price: parseInt(price)||0, image: null };
+            const newItems = text.split('\n').map(l => {
+                const [num, circle, type, item, price] = l.split(',').map(s => s.trim());
+                return { id: Date.now()+Math.random(), num, circle, type, item, price: parseInt(price)||0 };
             });
-            catalog = [...catalog, ...newItems]; await api('POST', catalog);
-            document.getElementById('bulk-input').value = ''; render();
+            catalog = [...catalog, ...newItems]; await api('POST', 'catalog', catalog); render();
         }
 
-        async function addSingle() {
-            const num = document.getElementById('c-num').value, circle = document.getElementById('c-circle').value,
-                  type = document.getElementById('c-type').value, item = document.getElementById('c-item').value, price = parseInt(document.getElementById('c-price').value)||0;
-            const imgFile = document.getElementById('c-image').files[0];
-            const image = imgFile ? await compressImage(imgFile) : null;
-            catalog.push({id: Date.now(), num, circle, type, item, price, image});
-            await api('POST', catalog); render();
-        }
-
-        async function deleteItem(id) { if(confirm("削除？")) { catalog = catalog.filter(i => i.id !== id); await api('POST', catalog); render(); } }
-
+        async function init() { catalog = await api('GET'); render(); }
+        async function deleteItem(id) { if(confirm("削除？")) { catalog = catalog.filter(i => i.id !== id); await api('POST', 'catalog', catalog); render(); } }
+        
         function render() {
             const el = document.getElementById('catalog-list');
             catalog.sort((a, b) => (a.num || '').localeCompare(b.num || '', 'ja', {numeric: true}));
             el.innerHTML = catalog.map(i => `
                 <div class="bg-slate-800 p-3 rounded-2xl border border-slate-700 flex items-center gap-3">
                     <div class="w-10 text-[9px] font-black text-pink-500 text-center bg-pink-500/10 py-1 rounded-md uppercase">${i.num || '--'}</div>
-                    <div class="flex-1 min-w-0">
-                        <div class="text-[9px] font-bold text-slate-500 truncate uppercase">${i.circle} | ${i.type}</div>
-                        <div class="font-bold text-sm text-slate-100 truncate">${i.item}</div>
-                    </div>
+                    <div class="flex-1 min-w-0"><div class="text-[9px] font-bold text-slate-500 truncate lowercase">${i.circle} | ${i.type}</div><div class="font-bold text-sm text-slate-100 truncate">${i.item}</div></div>
                     <button onclick="deleteItem(${i.id})" class="text-slate-600 p-2">×</button>
                 </div>
             `).join('');
