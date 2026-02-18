@@ -60,48 +60,64 @@
 
         async function deleteItem(id) { if(confirm("削除？")) { catalog = catalog.filter(i => i.id !== id); await api('POST', 'catalog', catalog); render(); } }
 
-        async function handleAiScan(input) {
-    if(!input.files[0]) return;
+       async function handleAiScan(input) {
+    if (!input.files[0]) return;
     const loading = document.getElementById('ai-loading');
     loading.classList.remove('hidden');
-    
-    // 画像をBase64に変換
-    const base64 = await new Promise(r => {
-        const rd = new FileReader();
-        rd.onload = () => r(rd.result.split(',')[1]);
-        rd.readAsDataURL(input.files[0]);
-    });
-    
+
     try {
-        const res = await api('POST', 'dify', { image: base64 });
-        
-        // エラーレスポンスのチェック
-        if (res.error) {
-            throw new Error(`APIエラー: ${res.error}`);
+        // 1. 画像を圧縮する
+        const compressedBase64 = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    // 最大横幅を1000pxに制限してリサイズ
+                    const MAX_WIDTH = 1000;
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // 画質を0.7(70%)に落としてBase64化（これでサイズが激減します）
+                    resolve(canvas.toDataURL('image/jpeg', 0.7).split(',')[1]);
+                };
+                img.src = e.target.result;
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(input.files[0]);
+        });
+
+        // 2. 圧縮したデータをAPIに送る
+        const res = await api('POST', 'dify', { image: compressedBase64 });
+
+        if (!res || !res.answer) {
+            throw new Error("AIから応答がありませんでした。Difyのログを確認してください。");
         }
 
-        // AIの回答があるかチェック
-        if (!res.answer) {
-            console.log("Difyからの応答:", res);
-            throw new Error("AIから有効な回答が得られませんでした。Difyのログを確認してください。");
+        const jsonMatch = res.answer.match(/\[.*\]/s);
+        if (!jsonMatch) {
+            throw new Error("AIが正しい形式で回答しませんでした。");
         }
 
-        // JSON部分を抽出
-        const match = res.answer.match(/\[.*\]/s);
-        if (!match) {
-            console.log("解析不能な回答:", res.answer);
-            throw new Error("AIが正しい形式（JSON）で回答しませんでした。プロンプトを見直してください。");
-        }
-
-        const json = JSON.parse(match[0]);
-        catalog = [...catalog, ...json.map(i => ({...i, id: Date.now() + Math.random()}))];
+        const json = JSON.parse(jsonMatch[0]);
+        catalog = [...catalog, ...json.map(i => ({ ...i, id: Date.now() + Math.random() }))];
         await api('POST', 'catalog', catalog);
         render();
-        alert(`${json.length}件読み込みました！`);
+        alert(`${json.length}件のアイテムを読み込みました！`);
 
-    } catch(e) {
+    } catch (e) {
         console.error("詳細エラー:", e);
-        alert(`スキャン失敗: ${e.message}`); // ここで具体的な原因を表示
+        alert(`スキャン失敗: ${e.message}`);
     } finally {
         loading.classList.add('hidden');
         input.value = '';
