@@ -1,163 +1,153 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Data Master</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <title>Vspo! Catalog Admin</title>
     <style>
-        .loading-pulse { animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        body { font-family: sans-serif; padding: 20px; background: #f4f7f9; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { border-bottom: 2px solid #ff69b4; padding-bottom: 10px; color: #333; }
+        
+        /* 編集フォーム */
+        .edit-form { background: #fff0f6; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: none; border: 1px solid #ff69b4; }
+        .edit-form input { padding: 8px; margin-right: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        
+        /* テーブルスタイル */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #eee; padding: 12px; text-align: left; }
+        th { background: #fafafa; }
+        tr:hover { background: #fff9fc; }
+        
+        .btn { padding: 6px 12px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; }
+        .btn-edit { background: #00bfff; color: white; }
+        .btn-delete { background: #ff4d4d; color: white; margin-left: 5px; }
+        .btn-save { background: #ff69b4; color: white; padding: 10px 20px; }
+        .btn-export { background: #333; color: white; padding: 10px 20px; float: right; }
+
+        /* エクスポート用エリア */
+        #json-output { width: 100%; height: 200px; margin-top: 20px; display: none; font-family: monospace; font-size: 0.8rem; }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen p-4 pb-24 font-sans">
-    <div class="max-w-md mx-auto">
-        <header class="flex justify-between items-center mb-6 py-4 border-b border-slate-800">
-            <h1 class="text-xl font-black text-pink-500 uppercase tracking-widest">Master Admin</h1>
-            <div id="sync-status" class="text-[9px] px-2 py-1 bg-slate-800 text-slate-500 rounded-full font-bold uppercase tracking-tighter">Verified</div>
-        </header>
+<body>
 
-        <section class="bg-slate-800 rounded-3xl p-6 mb-6 shadow-2xl border-2 border-blue-500/20">
-            <h2 class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-4">JSON Bulk Import</h2>
-            <div class="space-y-4">
-                <input id="json-file" type="file" accept=".json" class="hidden" onchange="handleJsonImport(this)">
-                <label for="json-file" class="block w-full bg-blue-600 hover:bg-blue-500 text-center py-4 rounded-2xl cursor-pointer font-black text-xs transition-all active:scale-95 shadow-lg shadow-blue-900/40">
-                    JSONファイルを読み込む
-                </label>
-            </div>
-        </section>
+<div class="container">
+    <h1>カタログデータ管理（編集・削除）</h1>
+    
+    <button class="btn btn-export" onclick="exportJson()">最新JSONをコピー用に生成</button>
+    <p style="font-size: 0.8rem; color: #666;">※編集後は上のボタンでJSONを生成し、catalog.jsonに貼り付けてください。</p>
 
-        <section class="bg-slate-800 rounded-3xl p-6 mb-8 shadow-2xl border-2 border-pink-500/20">
-            <h2 class="text-[10px] font-black text-pink-500 uppercase tracking-widest mb-4">AI Smart Scan</h2>
-            <div class="space-y-4">
-                <input id="ai-image" type="file" accept="image/*" class="hidden" onchange="handleAiScan(this)">
-                <label for="ai-image" class="block w-full bg-pink-600 hover:bg-pink-500 text-center py-5 rounded-2xl cursor-pointer font-black text-sm transition-all shadow-lg shadow-pink-900/40 active:scale-95">
-                    お品書きをスキャン
-                </label>
-                <div id="ai-loading" class="hidden text-center text-[10px] text-pink-400 font-bold tracking-widest loading-pulse uppercase">Processing...</div>
-            </div>
-        </section>
-
-        <details class="mb-8 group">
-            <summary class="text-[10px] font-bold text-slate-500 cursor-pointer uppercase tracking-widest text-center group-open:mb-4 outline-none">Manual / Text Bulk</summary>
-            <div class="bg-slate-800/50 rounded-2xl p-5 border border-slate-700 space-y-4">
-                <textarea id="bulk-input" rows="3" placeholder="配置,サークル,種類,品名,価格" class="w-full bg-slate-700 border-none p-4 rounded-xl text-[10px] text-slate-100 placeholder-slate-600 focus:ring-2 focus:ring-pink-500 outline-none"></textarea>
-                <button onclick="addBulk()" class="w-full bg-slate-700 hover:bg-slate-600 py-3 rounded-xl text-[10px] font-bold uppercase transition-colors">テキスト追加</button>
-            </div>
-        </details>
-
-        <div class="flex justify-between items-center mb-4 px-1">
-            <h2 class="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">Catalog Assets</h2>
-            <button onclick="clearAll()" class="text-[9px] text-red-900 hover:text-red-500 font-bold uppercase transition-all">全消去</button>
-        </div>
-        <div id="catalog-list" class="space-y-3"></div>
+    <div id="edit-area" class="edit-form">
+        <h3>アイテム編集</h3>
+        <input type="hidden" id="edit-index">
+        番号: <input type="text" id="edit-num" style="width: 60px;">
+        サークル: <input type="text" id="edit-circle">
+        商品名: <input type="text" id="edit-item" style="width: 200px;">
+        価格: <input type="number" id="edit-price" style="width: 80px;">
+        種別: <input type="text" id="edit-type" style="width: 80px;">
+        <button class="btn btn-save" onclick="updateItem()">反映</button>
+        <button class="btn" onclick="closeEdit()">キャンセル</button>
     </div>
 
-    <script>
-        let catalog = [];
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>番号</th>
+                <th>サークル</th>
+                <th>商品名</th>
+                <th>種別</th>
+                <th>価格</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            </tbody>
+    </table>
 
-        async function api(method='GET', type='catalog', data=null) {
-            const pass = localStorage.getItem('vggc_admin_pass');
-            try {
-                const res = await fetch(`/api/manage?type=${type}`, {
-                    method, headers: {'Content-Type': 'application/json', 'x-admin-password': pass || ''},
-                    body: data ? JSON.stringify(data) : null
-                });
-                if (res.status === 403) {
-                    const p = prompt("Password:");
-                    if(p) { localStorage.setItem('vggc_admin_pass', p); return api(method, type, data); }
-                }
-                return res.json();
-            } catch (err) { return {error: true}; }
+    <textarea id="json-output" readonly placeholder="ここに最新のJSONが出力されます"></textarea>
+</div>
+
+<script>
+    let catalogData = [];
+
+    // データ読み込み
+    async function loadData() {
+        const res = await fetch('catalog.json');
+        catalogData = await res.json();
+        renderTable();
+    }
+
+    // テーブル描画
+    function renderTable() {
+        const tbody = document.getElementById('table-body');
+        tbody.innerHTML = catalogData.map((d, index) => `
+            <tr>
+                <td>${d.num || ''}</td>
+                <td>${d.circle || ''}</td>
+                <td>${d.item || ''}</td>
+                <td>${d.type || ''}</td>
+                <td>¥${(d.price || 0).toLocaleString()}</td>
+                <td>
+                    <button class="btn btn-edit" onclick="openEdit(${index})">編集</button>
+                    <button class="btn btn-delete" onclick="deleteItem(${index})">削除</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    // 削除機能
+    function deleteItem(index) {
+        if(confirm(`${catalogData[index].item} を削除しますか？`)) {
+            catalogData.splice(index, 1);
+            renderTable();
         }
+    }
 
-        // --- JSONインポート処理 ---
-        function handleJsonImport(input) {
-            const file = input.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    const validated = data.map(i => ({
-                        id: Date.now() + Math.random(),
-                        num: i.num || '--', circle: i.circle || '不明',
-                        type: i.type || 'その他', item: i.item || '品名不明',
-                        price: parseInt(i.price) || 0
-                    }));
-                    catalog = [...catalog, ...validated];
-                    await api('POST', 'catalog', catalog);
-                    render();
-                    alert(`${validated.length}件インポートしました！`);
-                } catch (err) { alert("JSONの解析に失敗しました。"); }
-                input.value = '';
-            };
-            reader.readAsText(file);
-        }
+    // 編集フォームを開く
+    function openEdit(index) {
+        const d = catalogData[index];
+        document.getElementById('edit-index').value = index;
+        document.getElementById('edit-num').value = d.num || '';
+        document.getElementById('edit-circle').value = d.circle || '';
+        document.getElementById('edit-item').value = d.item || '';
+        document.getElementById('edit-price').value = d.price || 0;
+        document.getElementById('edit-type').value = d.type || '';
+        document.getElementById('edit-area').style.display = 'block';
+        window.scrollTo(0, 0);
+    }
 
-        // --- AIスキャン（強力圧縮版） ---
-        async function handleAiScan(input) {
-            if (!input.files[0]) return;
-            const loading = document.getElementById('ai-loading');
-            loading.classList.remove('hidden');
-            try {
-                const base64 = await new Promise(r => {
-                    const rd = new FileReader(); rd.onload = e => {
-                        const img = new Image(); img.onload = () => {
-                            const canvas = document.createElement('canvas');
-                            const MAX = 900; let w = img.width, h = img.height;
-                            if(w > MAX){ h *= MAX/w; w = MAX; }
-                            canvas.width = w; canvas.height = h;
-                            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                            r(canvas.toDataURL('image/jpeg', 0.4).split(',')[1]);
-                        }; img.src = e.target.result;
-                    }; rd.readAsDataURL(input.files[0]);
-                });
-                const res = await api('POST', 'dify', { image: base64 });
-                const jsonMatch = res.answer.match(/\[\s*\{.*\}\s*\]/s);
-                if (jsonMatch) {
-                    const items = JSON.parse(jsonMatch[0]).map(i => ({
-                        id: Date.now()+Math.random(), num: i.num || '--', circle: i.circle || '不明',
-                        type: i.type || 'その他', item: i.item || '不明', price: parseInt(i.price) || 0
-                    }));
-                    catalog = [...catalog, ...items];
-                    await api('POST', 'catalog', catalog);
-                    render();
-                }
-            } catch (e) { alert("スキャン失敗：画像を縮小して試してください"); }
-            finally { loading.classList.add('hidden'); input.value=''; }
-        }
+    // 編集を反映
+    function updateItem() {
+        const index = document.getElementById('edit-index').value;
+        catalogData[index] = {
+            num: document.getElementById('edit-num').value,
+            circle: document.getElementById('edit-circle').value,
+            item: document.getElementById('edit-item').value,
+            price: parseInt(document.getElementById('edit-price').value),
+            type: document.getElementById('edit-type').value
+        };
+        closeEdit();
+        renderTable();
+    }
 
-        async function addBulk() {
-            const text = document.getElementById('bulk-input').value.trim(); if(!text) return;
-            const items = text.split('\n').map(l => {
-                const [num, circle, type, item, price] = l.split(',').map(s => s.trim());
-                return { id: Date.now()+Math.random(), num: num||'--', circle: circle||'不明', type: type||'その他', item: item||'未入力', price: parseInt(price)||0 };
-            });
-            catalog = [...catalog, ...items]; await api('POST', 'catalog', catalog); 
-            document.getElementById('bulk-input').value = ''; render();
-        }
+    function closeEdit() {
+        document.getElementById('edit-area').style.display = 'none';
+    }
 
-        function render() {
-            const el = document.getElementById('catalog-list');
-            catalog.sort((a, b) => (a.num || '').localeCompare(b.num || '', 'ja', {numeric: true}));
-            el.innerHTML = catalog.map(i => `
-                <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700 flex items-center gap-4">
-                    <div class="w-12 text-[9px] font-black text-pink-500 text-center bg-pink-500/10 py-2 rounded-lg uppercase">${i.num || '--'}</div>
-                    <div class="flex-1 min-w-0">
-                        <div class="text-[9px] font-bold text-slate-500 truncate uppercase mb-0.5">${i.circle || '不明'} | ${i.type || 'その他'}</div>
-                        <div class="font-bold text-sm text-slate-100 truncate">${i.item || '品名不明'}</div>
-                        <div class="text-[10px] font-black text-pink-400 mt-1">¥${(i.price || 0).toLocaleString()}</div>
-                    </div>
-                    <button onclick="deleteItem(${i.id})" class="text-slate-600 hover:text-red-500 p-2 transition-all">🗑️</button>
-                </div>
-            `).join('');
-        }
+    // 最新のJSONをテキストエリアに出力
+    function exportJson() {
+        const output = document.getElementById('json-output');
+        const jsonStr = JSON.stringify(catalogData, null, 2);
+        output.value = jsonStr;
+        output.style.display = 'block';
+        
+        // クリップボードにコピー
+        output.select();
+        document.execCommand('copy');
+        alert("最新のJSONデータをクリップボードにコピーしました！\nGitHubの catalog.json に貼り付けて保存してください。");
+    }
 
-        async function init() { const data = await api('GET'); if(data && !data.error) { catalog = data; render(); } }
-        async function deleteItem(id) { if(confirm("削除？")) { catalog = catalog.filter(i => i.id !== id); await api('POST', 'catalog', catalog); render(); } }
-        async function clearAll() { if(confirm("全消去しますか？")) { catalog = []; await api('POST', 'catalog', catalog); render(); } }
-        init();
-    </script>
+    loadData();
+</script>
+
 </body>
 </html>
