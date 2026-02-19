@@ -3773,116 +3773,116 @@
     "price": 2000
   },
   {
-    "num": "K-11,12",
+    "num": "K-11-12",
     "circle": "Emmie 工房",
-    "type": "写真集",
     "item": "「ねこのあしあと」写真集 箔押し 46p",
-    "price": 2500
+    "price": 2500,
+    "type": "写真集"
   },
   {
-    "num": "K-11,12",
+    "num": "K-11-12",
     "circle": "Emmie 工房",
-    "type": "その他",
     "item": "猫汰つな ビッグシルエットTシャツ",
-    "price": 4500
+    "price": 4500,
+    "type": "その他"
   },
   {
-    "num": "K-11,12",
+    "num": "K-11-12",
     "circle": "Emmie 工房",
-    "type": "アクスタ",
     "item": "アクリルスタンド",
-    "price": 1500
+    "price": 1500,
+    "type": "アクスタ"
   },
   {
-    "num": "K-11,12",
+    "num": "K-11-12",
     "circle": "Emmie 工房",
-    "type": "その他",
     "item": "トレカ(セットはランダム1枚)",
-    "price": 300
+    "price": 300,
+    "type": "その他"
   },
   {
-    "num": "K-11,12",
+    "num": "K-11-12",
     "circle": "Emmie 工房",
-    "type": "缶バッジ",
     "item": "ホログラム缶バッジ",
-    "price": 300
+    "price": 300,
+    "type": "缶バッジ"
   },
   {
-    "num": "K-11,12",
+    "num": "K-11-12",
     "circle": "Emmie 工房",
-    "type": "その他",
     "item": "シール",
-    "price": 100
+    "price": 100,
+    "type": "その他"
   },
   {
-    "num": "K-11,12",
+    "num": "K-11-12",
     "circle": "Emmie 工房",
-    "type": "セット",
     "item": "新刊 9点セット (セット限定 ポリ袋 複製チェキ付き)",
-    "price": 10000
+    "price": 10000,
+    "type": "セット"
   },
   {
-    "num": "K-11,12",
+    "num": "K-11-12",
     "circle": "Emmie 工房",
-    "type": "その他",
     "item": "パスケース",
-    "price": 1000
+    "price": 1000,
+    "type": "その他"
   },
   {
-    "num": "K-11,12",
+    "num": "K-11-12",
     "circle": "Emmie 工房",
-    "type": "その他",
     "item": "生チェキ",
-    "price": 1000
+    "price": 1000,
+    "type": "その他"
   },
   {
-    "num": "K-11,12",
+    "num": "K-11-12",
     "circle": "Emmie 工房",
-    "type": "写真集",
     "item": "「ぽたくにあいされてる」写真集 箔押し 66p",
-    "price": 2500
+    "price": 2500,
+    "type": "写真集"
   },
   {
-    "num": "E27.28",
+    "num": "E-27-28",
     "circle": "SHINONIO (SHINOI & KONTA)",
-    "type": "セット",
     "item": "リサちゃん メイドさんセット",
-    "price": 500
+    "price": 500,
+    "type": "セット"
   },
   {
-    "num": "E27.28",
+    "num": "E-27-28",
     "circle": "SHINONIO (SHINOI & KONTA)",
-    "type": "その他",
     "item": "リサちゃん アクリルマグネット",
-    "price": 500
+    "price": 500,
+    "type": "その他"
   },
   {
-    "num": "E27.28",
+    "num": "E-27-28",
     "circle": "SHINONIO (SHINOI & KONTA)",
-    "type": "アクスタ",
     "item": "くろむちゃん 自立ミニアクスタ",
-    "price": 500
+    "price": 500,
+    "type": "アクスタ"
   },
   {
-    "num": "E27.28",
+    "num": "E-27-28",
     "circle": "SHINONIO (SHINOI & KONTA)",
-    "type": "アクキー",
     "item": "はなばなアクリルキーホルダー",
-    "price": 800
+    "price": 800,
+    "type": "アクキー"
   },
   {
-    "num": "E27.28",
+    "num": "E-27-28",
     "circle": "SHINONIO (SHINOI & KONTA)",
-    "type": "アクキー",
     "item": "はなばなペロキャンキーホルダー",
-    "price": 700
+    "price": 700,
+    "type": "アクキー"
   },
   {
-    "num": "E27.28",
+    "num": "E-27-28",
     "circle": "SHINONIO (SHINOI & KONTA)",
-    "type": "その他",
     "item": "色紙イラスト",
-    "price": 3000
+    "price": 3000,
+    "type": "その他"
   },
   {
     "num": "D-23",
@@ -3900,31 +3900,31 @@
   },
   {
     "num": "D-40",
-    "circle": null,
-    "type": "イラスト本",
+    "circle": "Mr,P shop",
     "item": "新刊（Variant / Fan art book of VSPO! vol.3）",
-    "price": 500
+    "price": 500,
+    "type": "イラスト本"
   },
   {
     "num": "D-40",
-    "circle": null,
-    "type": "アクスタ",
+    "circle": "Mr,P shop",
     "item": "アクスタ",
-    "price": 1500
+    "price": 1500,
+    "type": "アクスタ"
   },
   {
     "num": "D-40",
-    "circle": null,
-    "type": "その他",
+    "circle": "Mr,P shop",
     "item": "ステッカー",
-    "price": 100
+    "price": 100,
+    "type": "その他"
   },
   {
     "num": "D-40",
-    "circle": null,
-    "type": "その他",
+    "circle": "Mr,P shop",
     "item": "色紙",
-    "price": 1000
+    "price": 1000,
+    "type": "その他"
   },
   {
     "num": "I-40",
@@ -3997,18 +3997,18 @@
     "price": 2000
   },
   {
-    "num": "記載なし",
-    "circle": "記載なし",
-    "type": "アクキー",
+    "num": "C-39-40",
+    "circle": "アーツダイアログ",
     "item": "BIG アクリルキーホルダー",
-    "price": 1000
+    "price": 1000,
+    "type": "アクキー"
   },
   {
-    "num": "記載なし",
-    "circle": "記載なし",
-    "type": "アクキー",
+    "num": "C-39-40",
+    "circle": "アーツダイアログ",
     "item": "超超超 BIGな アクリルキーホルダー（各種 1個 会場限定）",
-    "price": 4500
+    "price": 4500,
+    "type": "アクキー"
   },
   {
     "num": "H-07",
@@ -4032,32 +4032,32 @@
     "price": 1000
   },
   {
-    "num": "E27.28",
+    "num": "E-27-28",
     "circle": "SHINONIO (SHINOI & KONTA)",
-    "type": "セット",
     "item": "はなリサ全衣装カレンダーカードセット",
-    "price": 800
+    "price": 800,
+    "type": "セット"
   },
   {
-    "num": "E27.28",
+    "num": "E-27-28",
     "circle": "SHINONIO (SHINOI & KONTA)",
-    "type": "セット",
     "item": "はなばな自立ミニアクスタセット",
-    "price": 1000
+    "price": 1000,
+    "type": "セット"
   },
   {
-    "num": "E27.28",
+    "num": "E-27-28",
     "circle": "SHINONIO (SHINOI & KONTA)",
-    "type": "アクスタ",
     "item": "STYLE:Balletcore アクリルスタンド",
-    "price": 1500
+    "price": 1500,
+    "type": "アクスタ"
   },
   {
-    "num": "E27.28",
+    "num": "E-27-28",
     "circle": "SHINONIO (SHINOI & KONTA)",
-    "type": "その他",
     "item": "色紙イラスト",
-    "price": 3000
+    "price": 3000,
+    "type": "その他"
   },
   {
     "num": "I-40",
@@ -4088,24 +4088,24 @@
     "price": 3500
   },
   {
-    "num": "A-17,18",
+    "num": "A-17-18",
     "circle": "ぽんぽこ茶屋",
-    "type": "アクスタ",
     "item": "橘ひなの",
-    "price": 1500
+    "price": 1500,
+    "type": "アクスタ"
   },
   {
-    "num": "A-17,18",
+    "num": "A-17-18",
     "circle": "ぽんぽこ茶屋",
-    "type": "アクスタ",
     "item": "一ノ瀬うるは",
-    "price": 1500
+    "price": 1500,
+    "type": "アクスタ"
   },
   {
-    "num": "A-17,18",
+    "num": "A-17-18",
     "circle": "ぽんぽこ茶屋",
-    "type": "アクスタ",
     "item": "八雲べに",
-    "price": 1500
+    "price": 1500,
+    "type": "アクスタ"
   }
 ]
