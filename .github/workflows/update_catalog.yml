@@ -1,15 +1,17 @@
-name: Update Catalog from Menus
+name: Update Catalog and Organize Images
 
 on:
   push:
     paths:
-      - 'menus/**' # menusフォルダに画像が入った時だけ実行
+      - 'menus/**'
+      # processedフォルダ自体の変更では再発動しないように制限
+      - '!menus/processed/**'
 
 jobs:
   process-images:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # 変更したjsonを書き込むために必要
+      contents: write # 変更をリポジトリに書き込む権限
 
     steps:
       - name: Checkout repository
@@ -32,6 +34,10 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add catalog.json
-          git commit -m "docs: update catalog.json from new images [skip ci]" || echo "No changes to commit"
+          
+          # 更新されたJSONと、移動した画像（menusフォルダ全体）をステージング
+          git add catalog.json menus/
+          
+          # 変更がある場合のみコミットを実行
+          git commit -m "docs: update catalog and organize processed images [skip ci]" || echo "No changes to commit"
           git push
