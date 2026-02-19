@@ -3,187 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vspo! Goods Organizer</title>
+    <title>Vspo! Event Catalog & Organizer</title>
     <style>
         :root {
             --vspo-pink: #ff69b4;
             --vspo-blue: #00bfff;
             --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
         }
 
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: var(--bg-color);
-            margin: 0;
-            padding: 20px 20px 120px 20px;
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background: var(--bg-color); margin: 0; padding-bottom: 120px; color: #333; }
+
+        /* ヘッダー・ナビゲーション */
+        header { background: #333; color: white; padding: 15px 20px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .header-top { display: flex; justify-content: space-between; align-items: center; max-width: 1100px; margin: 0 auto; }
+        .user-info { font-size: 0.9rem; color: var(--vspo-pink); cursor: pointer; font-weight: bold; }
+        
+        .nav-tabs { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
+        .tab-btn {
+            background: #555; border: none; color: white; padding: 10px 24px;
+            border-radius: 25px; cursor: pointer; font-weight: bold; transition: 0.3s;
         }
+        .tab-btn.active { background: var(--vspo-pink); box-shadow: 0 0 10px rgba(255,105,180,0.5); }
 
-        /* ユーザーIDエリア */
-        .header-bar {
-            max-width: 1100px;
-            margin: 0 auto 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #333;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 10px;
-        }
+        /* コンテンツコンテナ */
+        .container { max-width: 1100px; margin: 25px auto; padding: 0 15px; }
+        .view { display: none; }
+        .view.active { display: block; }
 
-        .user-id { color: var(--vspo-pink); font-weight: bold; }
-
-        /* コントロールエリア */
-        .controls {
-            max-width: 1100px;
-            margin: 0 auto 30px;
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 15px;
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
+        /* コントロールパネル */
+        .controls { 
+            display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; 
+            margin-bottom: 25px; background: white; padding: 18px; border-radius: 15px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
-
         @media (max-width: 768px) { .controls { grid-template-columns: 1fr; } }
 
-        input, select, button {
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
+        input, select { padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
 
-        button { background: var(--vspo-pink); color: white; border: none; cursor: pointer; }
-        button:hover { opacity: 0.9; }
-
-        /* グリッドレイアウト */
-        .item-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        /* カードデザイン */
+        /* グリッド・カード */
+        .item-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .item-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            position: relative;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 2px solid transparent;
+            background: var(--card-bg); border-radius: 15px; padding: 18px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); cursor: pointer; 
+            border: 2px solid transparent; transition: 0.2s ease; position: relative;
         }
+        .item-card.selected { border-color: var(--vspo-pink); background: #fff9fc; }
+        .item-card:hover { transform: translateY(-4px); }
 
-        .item-card.selected {
-            border-color: var(--vspo-pink);
-            background-color: #fff9fc;
-        }
+        .card-header { display: flex; justify-content: space-between; font-size: 0.8rem; color: #888; margin-bottom: 8px; }
+        .space-num { background: #eee; color: #444; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+        .item-type { font-size: 0.75rem; color: var(--vspo-blue); font-weight: bold; }
+        .item-name { font-size: 1.05rem; font-weight: bold; margin: 10px 0; height: 2.6em; overflow: hidden; line-height: 1.3; }
+        .item-price { color: var(--vspo-pink); font-size: 1.3rem; font-weight: bold; text-align: right; }
 
-        .item-card:hover { transform: translateY(-3px); }
-
-        .circle-info { font-size: 0.8rem; color: #888; margin-bottom: 5px; }
-        .item-num { font-weight: bold; background: #eee; padding: 2px 6px; border-radius: 4px; color: #444; }
-        .item-name { font-size: 1rem; font-weight: bold; margin: 10px 0; height: 2.5em; overflow: hidden; }
-        .item-price { color: var(--vspo-pink); font-size: 1.2rem; font-weight: bold; }
-
-        /* 合計金額バー（固定表示） */
+        /* 下部合計バー */
         .total-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
-            padding: 15px 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 30px;
-            z-index: 1000;
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px);
+            border-top: 2px solid var(--vspo-pink); padding: 18px 0;
+            display: flex; justify-content: center; gap: 30px; align-items: center;
+            z-index: 1000; box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
         }
-
         .total-info { font-size: 1.1rem; font-weight: bold; }
-        .total-price { font-size: 1.8rem; color: var(--vspo-pink); margin-left: 10px; }
+        .total-amount { font-size: 1.8rem; color: var(--vspo-pink); margin-left: 8px; }
+        
+        .action-btn { padding: 10px 18px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+        .btn-reset { background: #888; color: white; }
+        .btn-share { background: var(--vspo-blue); color: white; }
 
-        .btn-copy { background: #666; font-size: 0.8rem; }
+        #empty-msg { text-align: center; color: #999; margin-top: 60px; font-size: 1.1rem; }
     </style>
 </head>
 <body>
 
-<div class="header-bar">
-    <div>👤 ID: <span id="display-user-id" class="user-id">読み込み中...</span></div>
-    <div>
-        <button class="btn-copy" onclick="copyShareUrl()">共有URLをコピー</button>
-        <button onclick="changeUser()">ID切替</button>
+<header>
+    <div class="header-top">
+        <h2 style="margin:0; font-size:1.3rem;">Vspo! Catalog</h2>
+        <div class="user-info" onclick="changeUser()">👤 ID: <span id="user-display">---</span></div>
+    </div>
+    <nav class="nav-tabs">
+        <button id="tab-catalog" class="tab-btn active" onclick="switchTab('catalog')">全アイテム一覧</button>
+        <button id="tab-wishlist" class="tab-btn" onclick="switchTab('wishlist')">買い物リスト</button>
+    </nav>
+</header>
+
+<div class="container">
+    <div id="catalog-view" class="view active">
+        <div class="controls">
+            <input type="text" id="search-input" placeholder="サークル・商品名・番号で検索...">
+            <select id="type-filter"><option value="">すべての種別</option></select>
+            <select id="sort-order">
+                <option value="num-asc">サークル番号順 (A-Z)</option>
+                <option value="price-asc">価格の安い順</option>
+                <option value="price-desc">価格の高い順</option>
+            </select>
+        </div>
+        <div id="catalog-grid" class="item-grid"></div>
+    </div>
+
+    <div id="wishlist-view" class="view">
+        <h3 id="wishlist-title" style="border-left: 5px solid var(--vspo-pink); padding-left: 10px;">あなたのリスト</h3>
+        <div id="wishlist-grid" class="item-grid"></div>
+        <div id="empty-msg">まだチェックしたアイテムがありません。</div>
     </div>
 </div>
-
-<div class="controls">
-    <input type="text" id="search-input" placeholder="検索 (サークル名・グッズ・番号)...">
-    <select id="type-filter"><option value="">すべての種別</option></select>
-    <select id="sort-order">
-        <option value="num-asc">サークル番号順 (A-01...)</option>
-        <option value="price-asc">価格の安い順</option>
-        <option value="price-desc">価格の高い順</option>
-    </select>
-</div>
-
-<div id="catalog-container" class="item-grid"></div>
 
 <div class="total-bar">
     <div class="total-info">
-        選択: <span id="item-count">0</span> 点
-        <span class="total-price">合計 ¥<span id="total-amount">0</span></span>
+        計 <span id="total-count">0</span> 点 <span class="total-amount">¥<span id="total-val">0</span></span>
     </div>
-    <button style="background:#888" onclick="resetWishlist()">リセット</button>
+    <button class="action-btn btn-reset" onclick="resetWishlist()">クリア</button>
+    <button class="action-btn btn-share" onclick="copyShareUrl()">共有URL</button>
 </div>
 
 <script>
     let catalogData = [];
-    let currentUserId = "";
     let wishlist = new Set();
+    let currentUserId = "";
 
     async function init() {
-        // 1. ID管理 (URL優先 > LocalStorage > Prompt)
-        const urlParams = new URLSearchParams(window.location.search);
-        const idFromUrl = urlParams.get('id');
-        
-        if (idFromUrl) {
-            currentUserId = idFromUrl;
-            localStorage.setItem('vspo_last_user', currentUserId);
-        } else {
-            currentUserId = localStorage.getItem('vspo_last_user') || prompt("利用する個人IDを入力してください (例: hinano_fan)", "guest") || "guest";
-            localStorage.setItem('vspo_last_user', currentUserId);
-        }
-        document.getElementById('display-user-id').textContent = currentUserId;
+        // 1. ID管理 (URL優先 > ストレージ)
+        const params = new URLSearchParams(window.location.search);
+        currentUserId = params.get('id') || localStorage.getItem('vspo_last_user') || prompt("個人IDを入力してください", "guest") || "guest";
+        localStorage.setItem('vspo_last_user', currentUserId);
+        document.getElementById('user-display').textContent = currentUserId;
 
-        // 2. データの取得
+        // 2. データのフェッチ
         try {
-            const response = await fetch('catalog.json');
-            catalogData = await response.json();
+            const res = await fetch('catalog.json');
+            catalogData = await res.json();
             
-            // 種別フィルター作成
-            const types = [...new Set(catalogData.map(item => item.type))];
+            // 種別フィルター生成
+            const types = [...new Set(catalogData.map(d => d.type))].filter(Boolean);
             const filter = document.getElementById('type-filter');
-            types.forEach(t => { if(t) filter.innerHTML += `<option value="${t}">${t}</option>`; });
+            types.forEach(t => filter.innerHTML += `<option value="${t}">${t}</option>`);
 
             loadWishlist();
             applySort();
             render();
         } catch (e) {
-            document.getElementById('catalog-container').innerHTML = "catalog.json が見つかりません。GitHub Actionsの完了を待ってください。";
+            document.body.innerHTML = "<div style='padding:50px; text-align:center;'>catalog.json が読み込めません。GitHub Actionsの完了を確認してください。</div>";
         }
     }
 
-    // ウィッシュリスト保存 (IDごとに鍵を分ける)
-    function saveWishlist() {
+    function switchTab(tab) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        
+        document.getElementById(`${tab}-view`).classList.add('active');
+        document.getElementById(`tab-${tab}`).classList.add('active');
+        render();
+    }
+
+    // 自然順ソートの実装
+    function applySort() {
+        const order = document.getElementById('sort-order').value;
+        catalogData.sort((a, b) => {
+            if (order === 'num-asc') return (a.num || "").localeCompare(b.num || "", undefined, {numeric: true});
+            return order === 'price-asc' ? (a.price || 0) - (b.price || 0) : (b.price || 0) - (a.price || 0);
+        });
+    }
+
+    function render() {
+        const query = document.getElementById('search-input').value.toLowerCase();
+        const typeFilter = document.getElementById('type-filter').value;
+        const catalogGrid = document.getElementById('catalog-grid');
+        const wishlistGrid = document.getElementById('wishlist-grid');
+
+        // 表示用HTML生成ロジック
+        const createCard = (d) => {
+            const key = `${d.circle}_${d.item}`;
+            const selected = wishlist.has(key);
+            return `
+                <div class="item-card ${selected ? 'selected' : ''}" onclick="toggleItem('${key}')">
+                    <div class="card-header">
+                        <span class="space-num">${d.num || '---'}</span>
+                        <span>${d.circle || 'サークル名なし'}</span>
+                    </div>
+                    <div class="item-type">${d.type || ''}</div>
+                    <div class="item-name">${d.item}</div>
+                    <div class="item-price">¥${(d.price || 0).toLocaleString()}</div>
+                </div>
+            `;
+        };
+
+        // 一覧フィルタリング
+        const filtered = catalogData.filter(d => {
+            return (!typeFilter || d.type === typeFilter) && 
+                   (!query || d.item.toLowerCase().includes(query) || d.circle.toLowerCase().includes(query) || d.num.toLowerCase().includes(query));
+        });
+        catalogGrid.innerHTML = filtered.map(createCard).join('');
+
+        // 買い物リスト
+        const wishes = catalogData.filter(d => wishlist.has(`${d.circle}_${d.item}`));
+        wishlistGrid.innerHTML = wishes.map(createCard).join('');
+        document.getElementById('empty-msg').style.display = wishes.length ? 'none' : 'block';
+        document.getElementById('wishlist-title').textContent = `${currentUserId} さんの買い物リスト (${wishes.length}点)`;
+
+        updateTotal(wishes);
+    }
+
+    function toggleItem(key) {
+        if (wishlist.has(key)) wishlist.delete(key);
+        else wishlist.add(key);
         localStorage.setItem(`wishlist_${currentUserId}`, JSON.stringify(Array.from(wishlist)));
+        render();
+    }
+
+    function updateTotal(wishes) {
+        const total = wishes.reduce((s, i) => s + (i.price || 0), 0);
+        document.getElementById('total-val').textContent = total.toLocaleString();
+        document.getElementById('total-count').textContent = wishes.length;
     }
 
     function loadWishlist() {
@@ -191,91 +222,33 @@
         wishlist = new Set(saved ? JSON.parse(saved) : []);
     }
 
-    // 自然なソート (C-1, C-10などが正しく並ぶように)
-    function applySort() {
-        const order = document.getElementById('sort-order').value;
-        catalogData.sort((a, b) => {
-            if (order === "num-asc") {
-                return (a.num || "").localeCompare((b.num || ""), undefined, { numeric: true, sensitivity: 'base' });
-            } else if (order === "price-asc") {
-                return (a.price || 0) - (b.price || 0);
-            } else {
-                return (b.price || 0) - (a.price || 0);
-            }
-        });
-    }
-
-    function render() {
-        const search = document.getElementById('search-input').value.toLowerCase();
-        const type = document.getElementById('type-filter').value;
-        const container = document.getElementById('catalog-container');
-
-        const filtered = catalogData.filter(item => {
-            const matchesSearch = !search || item.circle?.toLowerCase().includes(search) || item.item?.toLowerCase().includes(search) || item.num?.toLowerCase().includes(search);
-            const matchesType = !type || item.type === type;
-            return matchesSearch && matchesType;
-        });
-
-        container.innerHTML = filtered.map(item => {
-            const key = `${item.circle}_${item.item}`;
-            const isSelected = wishlist.has(key);
-            return `
-                <div class="item-card ${isSelected ? 'selected' : ''}" onclick="toggleWish('${key}')">
-                    <div class="circle-info"><span class="item-num">${item.num || '---'}</span> ${item.circle || '不明'}</div>
-                    <div style="font-size:0.7rem; color:var(--vspo-blue)">${item.type}</div>
-                    <div class="item-name">${item.item}</div>
-                    <div class="item-price">¥${(item.price || 0).toLocaleString()}</div>
-                </div>
-            `;
-        }).join('');
-
-        updateTotal();
-    }
-
-    function toggleWish(key) {
-        if (wishlist.has(key)) wishlist.delete(key);
-        else wishlist.add(key);
-        saveWishlist();
-        render();
-    }
-
-    function updateTotal() {
-        let total = 0;
-        catalogData.forEach(item => {
-            if (wishlist.has(`${item.circle}_${item.item}`)) total += (item.price || 0);
-        });
-        document.getElementById('total-amount').textContent = total.toLocaleString();
-        document.getElementById('item-count').textContent = wishlist.size;
-    }
-
     function changeUser() {
-        const newId = prompt("新しいIDを入力してください", currentUserId);
-        if (newId) {
-            localStorage.setItem('vspo_last_user', newId);
-            window.location.search = `?id=${encodeURIComponent(newId)}`;
+        const id = prompt("切り替えるユーザーIDを入力してください", currentUserId);
+        if (id) {
+            localStorage.setItem('vspo_last_user', id);
+            window.location.search = `?id=${encodeURIComponent(id)}`;
         }
     }
 
     function copyShareUrl() {
         const url = `${window.location.origin}${window.location.pathname}?id=${encodeURIComponent(currentUserId)}`;
-        navigator.clipboard.writeText(url).then(() => alert("共有用URLをコピーしました！"));
+        navigator.clipboard.writeText(url).then(() => alert("共有URLをコピーしました！IDごとのリストを共有できます。"));
     }
 
     function resetWishlist() {
-        if(confirm("リストをクリアしますか？")) {
+        if (confirm("選択したアイテムをすべて解除しますか？")) {
             wishlist.clear();
-            saveWishlist();
+            localStorage.removeItem(`wishlist_${currentUserId}`);
             render();
         }
     }
 
-    // リスナー設定
+    // イベント設定
     document.getElementById('search-input').addEventListener('input', render);
     document.getElementById('type-filter').addEventListener('change', render);
     document.getElementById('sort-order').addEventListener('change', () => { applySort(); render(); });
 
     init();
 </script>
-
 </body>
 </html>
