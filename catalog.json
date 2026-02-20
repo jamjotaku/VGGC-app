@@ -4964,37 +4964,37 @@
   },
   {
     "num": "B-08",
-    "circle": "UME SYRUP",
-    "type": "イラスト本",
+    "circle": "梅シロップ",
     "item": "Charm フルカラーイラスト集",
-    "price": 1000
+    "price": 1000,
+    "type": "イラスト本"
   },
   {
     "num": "B-08",
-    "circle": "UME SYRUP",
-    "type": "アクスタ",
+    "circle": "梅シロップ",
     "item": "アクリルスタンド 蝶屋はなび",
-    "price": 1000
+    "price": 1000,
+    "type": "アクスタ"
   },
   {
     "num": "B-08",
-    "circle": "UME SYRUP",
-    "type": "アクスタ",
+    "circle": "梅シロップ",
     "item": "アクリルスタンド 小雀とと",
-    "price": 1000
+    "price": 1000,
+    "type": "アクスタ"
   },
   {
     "num": "B-08",
-    "circle": "UME SYRUP",
-    "type": "アクスタ",
+    "circle": "梅シロップ",
     "item": "アクリルスタンド 英リサ",
-    "price": 1000
+    "price": 1000,
+    "type": "アクスタ"
   },
   {
     "num": "B-08",
-    "circle": "UME SYRUP",
-    "type": "アクスタ",
+    "circle": "梅シロップ",
     "item": "アクリルスタンド ソラリリコ",
-    "price": 1000
+    "price": 1000,
+    "type": "アクスタ"
   }
 ]
