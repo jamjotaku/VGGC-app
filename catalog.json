@@ -4961,5 +4961,40 @@
     "type": "アクキー",
     "item": "アクリルキーホルダー",
     "price": 500
+  },
+  {
+    "num": "B-08",
+    "circle": "UME SYRUP",
+    "type": "イラスト本",
+    "item": "Charm フルカラーイラスト集",
+    "price": 1000
+  },
+  {
+    "num": "B-08",
+    "circle": "UME SYRUP",
+    "type": "アクスタ",
+    "item": "アクリルスタンド 蝶屋はなび",
+    "price": 1000
+  },
+  {
+    "num": "B-08",
+    "circle": "UME SYRUP",
+    "type": "アクスタ",
+    "item": "アクリルスタンド 小雀とと",
+    "price": 1000
+  },
+  {
+    "num": "B-08",
+    "circle": "UME SYRUP",
+    "type": "アクスタ",
+    "item": "アクリルスタンド 英リサ",
+    "price": 1000
+  },
+  {
+    "num": "B-08",
+    "circle": "UME SYRUP",
+    "type": "アクスタ",
+    "item": "アクリルスタンド ソラリリコ",
+    "price": 1000
   }
 ]
