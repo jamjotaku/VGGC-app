@@ -4158,13 +4158,6 @@
     "price": 4000
   },
   {
-    "num": "E-09",
-    "circle": "さかなや",
-    "type": "その他",
-    "item": "AR ポスカ",
-    "price": 0
-  },
-  {
     "num": "I-29",
     "circle": "八転び八起き",
     "type": "アクスタ",
@@ -4235,25 +4228,25 @@
     "price": 1200
   },
   {
-    "num": "VGGC11th B-02",
-    "circle": "pepper + mill",
-    "type": "アクスタ",
+    "num": "B-02",
+    "circle": "peppermill",
     "item": "かがすみれ アクリルスタンド",
-    "price": 1500
+    "price": 1500,
+    "type": "アクスタ"
   },
   {
-    "num": "VGGC11th B-02",
-    "circle": "pepper + mill",
-    "type": "その他",
+    "num": "B-02",
+    "circle": "peppermill",
     "item": "ポスカ＆ステッカー",
-    "price": 100
+    "price": 100,
+    "type": "その他"
   },
   {
-    "num": "VGGC11th B-02",
-    "circle": "pepper + mill",
-    "type": "アクキー",
+    "num": "B-02",
+    "circle": "peppermill",
     "item": "330fam. アクリルキーホルダー",
-    "price": 500
+    "price": 500,
+    "type": "アクキー"
   },
   {
     "num": "B-11",
@@ -4298,32 +4291,32 @@
     "price": 2500
   },
   {
-    "num": "A-13,14",
+    "num": "A-13-14",
     "circle": "AliceSyndrome*",
-    "type": "セット",
     "item": "VGGC11th 新刊セット",
-    "price": 2000
+    "price": 2000,
+    "type": "セット"
   },
   {
-    "num": "A-13,14",
+    "num": "A-13-14",
     "circle": "AliceSyndrome*",
-    "type": "その他",
     "item": "プレイマット typeA",
-    "price": 3000
+    "price": 3000,
+    "type": "その他"
   },
   {
-    "num": "A-13,14",
+    "num": "A-13-14",
     "circle": "AliceSyndrome*",
-    "type": "その他",
     "item": "プレイマット typeB",
-    "price": 3000
+    "price": 3000,
+    "type": "その他"
   },
   {
-    "num": "A-13,14",
+    "num": "A-13-14",
     "circle": "AliceSyndrome*",
-    "type": "セット",
     "item": "スリーブ 2 種セット",
-    "price": 2500
+    "price": 2500,
+    "type": "セット"
   },
   {
     "num": "B-06",
@@ -4361,221 +4354,214 @@
     "price": 1000
   },
   {
-    "num": "J.3132",
+    "num": "J-31-32",
     "circle": "Sugar Raspberry / SUGAR RASPBERRY",
-    "type": "アクスタ",
     "item": "kyOu8 アクリルスタンド",
-    "price": 1000
+    "price": 1000,
+    "type": "アクスタ"
   },
   {
-    "num": "J.3132",
+    "num": "J-31-32",
     "circle": "Sugar Raspberry / SUGAR RASPBERRY",
-    "type": "アクキー",
     "item": "kyOu8 アクキー",
-    "price": 500
+    "price": 500,
+    "type": "アクキー"
   },
   {
-    "num": "J.3132",
+    "num": "J-31-32",
     "circle": "Sugar Raspberry / SUGAR RASPBERRY",
-    "type": "アクスタ",
     "item": "るあたろす アクリルスタンド（高さ約12cm）",
-    "price": 1500
+    "price": 1500,
+    "type": "アクスタ"
   },
   {
-    "num": "J.3132",
+    "num": "J-31-32",
     "circle": "Sugar Raspberry / SUGAR RASPBERRY",
-    "type": "その他",
     "item": "るあたろす タペストリー A2",
-    "price": 2000
+    "price": 2000,
+    "type": "その他"
   },
   {
-    "num": "J.3132",
+    "num": "J-31-32",
     "circle": "Sugar Raspberry / SUGAR RASPBERRY",
-    "type": "その他",
-    "item": "るあたろす 無料配布 ミニカード",
-    "price": 0
-  },
-  {
-    "num": "J.3132",
-    "circle": "Sugar Raspberry / SUGAR RASPBERRY",
-    "type": "その他",
     "item": "にるね チェキ風カード",
-    "price": 300
+    "price": 300,
+    "type": "その他"
   },
   {
-    "num": "D11-12",
+    "num": "D-11-12",
     "circle": "しーぷきゃっと / Sheep Cat",
-    "type": "セット",
     "item": "新刊セット",
-    "price": 3000
+    "price": 3000,
+    "type": "セット"
   },
   {
-    "num": "D11-12",
+    "num": "D-11-12",
     "circle": "しーぷきゃっと / Sheep Cat",
-    "type": "イラスト本",
     "item": "新刊単品",
-    "price": 500
+    "price": 500,
+    "type": "イラスト本"
   },
   {
-    "num": "VGGC11th 【D11-12】",
+    "num": "D-11-12",
     "circle": "しーぷきゃっと (Sheep+Cat)",
-    "type": "イラスト本",
     "item": "C107新刊",
-    "price": 500
+    "price": 500,
+    "type": "イラスト本"
   },
   {
-    "num": "VGGC11th 【D11-12】",
+    "num": "D-11-12",
     "circle": "しーぷきゃっと (Sheep+Cat)",
-    "type": "セット",
     "item": "ステッカーセット (みみたやorひなーの)",
-    "price": 1000
+    "price": 1000,
+    "type": "セット"
   },
   {
-    "num": "VGGC11th 【D11-12】",
+    "num": "D-11-12",
     "circle": "しーぷきゃっと (Sheep+Cat)",
-    "type": "セット",
     "item": "グッズセット (みみたやorひなーの)",
-    "price": 2000
+    "price": 2000,
+    "type": "セット"
   },
   {
-    "num": "VGGC11th 【D11-12】",
+    "num": "D-11-12",
     "circle": "しーぷきゃっと (Sheep+Cat)",
-    "type": "セット",
     "item": "VGGC10えまるな新刊グッズセット",
-    "price": 2000
+    "price": 2000,
+    "type": "セット"
   },
   {
-    "num": "VGGC11th 【D11-12】",
+    "num": "D-11-12",
     "circle": "しーぷきゃっと (Sheep+Cat)",
-    "type": "セット",
     "item": "C106うるたや新刊グッズセット",
-    "price": 2000
+    "price": 2000,
+    "type": "セット"
   },
   {
-    "num": "VGGC11th 【D11-12】",
+    "num": "D-11-12",
     "circle": "しーぷきゃっと (Sheep+Cat)",
-    "type": "セット",
     "item": "C106セナひな新刊グッズセット",
-    "price": 2000
+    "price": 2000,
+    "type": "セット"
   },
   {
-    "num": "VGGC11th 【D11-12】",
+    "num": "D-11-12",
     "circle": "しーぷきゃっと (Sheep+Cat)",
-    "type": "イラスト本",
     "item": "既刊",
-    "price": 500
+    "price": 500,
+    "type": "イラスト本"
   },
   {
-    "num": "VGGC11th 【D11-12】",
+    "num": "D-11-12",
     "circle": "しーぷきゃっと (Sheep+Cat)",
-    "type": "アクスタ",
     "item": "アクリルスタンド",
-    "price": 700
+    "price": 700,
+    "type": "アクスタ"
   },
   {
-    "num": "VGGC11th 【D11-12】",
+    "num": "D-11-12",
     "circle": "しーぷきゃっと (Sheep+Cat)",
-    "type": "その他",
     "item": "A1ポスター",
-    "price": 2000
+    "price": 2000,
+    "type": "その他"
   },
   {
-    "num": "H-11, H-12",
+    "num": "H-11-12",
     "circle": "らぱんおーれ",
-    "type": "セット",
     "item": "新刊セット A",
-    "price": 4000
+    "price": 4000,
+    "type": "セット"
   },
   {
-    "num": "H-11, H-12",
+    "num": "H-11-12",
     "circle": "らぱんおーれ",
-    "type": "セット",
     "item": "新刊セット B",
-    "price": 1500
+    "price": 1500,
+    "type": "セット"
   },
   {
-    "num": "H-11, H-12",
+    "num": "H-11-12",
     "circle": "らぱんおーれ",
-    "type": "アクスタ",
     "item": "MOKA's アクスタ",
-    "price": 2500
+    "price": 2500,
+    "type": "アクスタ"
   },
   {
-    "num": "H-11, H-12",
+    "num": "H-11-12",
     "circle": "らぱんおーれ",
-    "type": "セット",
     "item": "アクスタセット ver.MOKA",
-    "price": 2000
+    "price": 2000,
+    "type": "セット"
   },
   {
-    "num": "H-11, H-12",
+    "num": "H-11-12",
     "circle": "らぱんおーれ",
-    "type": "セット",
     "item": "アクスタセット ver.HANABI",
-    "price": 2000
+    "price": 2000,
+    "type": "セット"
   },
   {
-    "num": "H-11, H-12",
+    "num": "H-11-12",
     "circle": "らぱんおーれ",
-    "type": "アクスタ",
     "item": "単品アクスタ ver.MOKA",
-    "price": 2000
+    "price": 2000,
+    "type": "アクスタ"
   },
   {
-    "num": "H-11, H-12",
+    "num": "H-11-12",
     "circle": "らぱんおーれ",
-    "type": "アクスタ",
     "item": "単品アクスタ ver.TSUNA",
-    "price": 2500
+    "price": 2500,
+    "type": "アクスタ"
   },
   {
-    "num": "H-11, H-12",
+    "num": "H-11-12",
     "circle": "らぱんおーれ",
-    "type": "セット",
     "item": "蝶結びアクキーセット",
-    "price": 3000
+    "price": 3000,
+    "type": "セット"
   },
   {
-    "num": "H-11, H-12",
+    "num": "H-11-12",
     "circle": "らぱんおーれ",
-    "type": "その他",
     "item": "直筆色紙 会場限定",
-    "price": 1500
+    "price": 1500,
+    "type": "その他"
   },
   {
-    "num": null,
-    "circle": "Crescita",
-    "type": "イラスト本",
+    "num": "E-11-12",
+    "circle": "てぃーぽっと",
     "item": "イラスト本「Crescita」",
-    "price": 1000
+    "price": 1000,
+    "type": "イラスト本"
   },
   {
-    "num": null,
-    "circle": "Crescita",
-    "type": "アクスタ",
+    "num": "E-11-12",
+    "circle": "てぃーぽっと",
     "item": "アクリルスタンド（橘ひなの）",
-    "price": 1500
+    "price": 1500,
+    "type": "アクスタ"
   },
   {
-    "num": null,
-    "circle": "Crescita",
-    "type": "アクスタ",
+    "num": "E-11-12",
+    "circle": "てぃーぽっと",
     "item": "アクリルスタンド（猫汰つな）",
-    "price": 1500
+    "price": 1500,
+    "type": "アクスタ"
   },
   {
-    "num": null,
-    "circle": "Crescita",
-    "type": "セット",
+    "num": "E-11-12",
+    "circle": "てぃーぽっと",
     "item": "アクリルスタンド チェキセット（猫汰つな）",
-    "price": 2000
+    "price": 2000,
+    "type": "セット"
   },
   {
-    "num": null,
-    "circle": "Crescita",
-    "type": "セット",
+    "num": "E-11-12",
+    "circle": "てぃーぽっと",
     "item": "アクリルスタンド チェキセット（橘ひなの）",
-    "price": 2000
+    "price": 2000,
+    "type": "セット"
   },
   {
     "num": "E-18",
@@ -4634,24 +4620,24 @@
     "price": 3000
   },
   {
-    "num": "",
-    "circle": "",
-    "type": "アクスタ",
+    "num": "C-37",
+    "circle": "くまくまらすく",
     "item": "くるみのあ アクリルスタンド",
-    "price": 1500
+    "price": 1500,
+    "type": "アクスタ"
   },
   {
-    "num": "",
-    "circle": "",
-    "type": "その他",
+    "num": "C-37",
+    "circle": "くまくまらすく",
     "item": "手書き色紙 (大)",
-    "price": 2000
+    "price": 2000,
+    "type": "その他"
   },
   {
-    "num": "",
-    "circle": "",
-    "type": "その他",
+    "num": "C-37",
+    "circle": "くまくまらすく",
     "item": "手書き色紙 (小)",
-    "price": 1000
+    "price": 1000,
+    "type": "その他"
   }
 ]
