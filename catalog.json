@@ -5314,24 +5314,24 @@
   },
   {
     "num": "D-03",
-    "circle": "deco boco Hompo",
-    "type": "セット",
+    "circle": "凸凹本舗",
     "item": "胡桃のあ 新刊セット",
-    "price": 3000
+    "price": 3000,
+    "type": "セット"
   },
   {
     "num": "D-03",
-    "circle": "deco boco Hompo",
-    "type": "イラスト本",
+    "circle": "凸凹本舗",
     "item": "新刊単品",
-    "price": 1000
+    "price": 1000,
+    "type": "イラスト本"
   },
   {
     "num": "D-03",
-    "circle": "deco boco Hompo",
-    "type": "アクスタ",
+    "circle": "凸凹本舗",
     "item": "胡桃のあ A5アクリルプレート",
-    "price": 2000
+    "price": 2000,
+    "type": "アクスタ"
   },
   {
     "num": "D-32",
@@ -5360,13 +5360,6 @@
     "type": "イラスト本",
     "item": "既刊",
     "price": 300
-  },
-  {
-    "num": "D-32",
-    "circle": "Sweet Parade",
-    "type": "その他",
-    "item": "色紙",
-    "price": null
   },
   {
     "num": "D-04",
@@ -5405,65 +5398,9 @@
   },
   {
     "num": "D-31",
-    "circle": "",
-    "type": "アクスタ",
+    "circle": "ゆいみす",
     "item": "セーラー服ひなーのアクリルスタンド",
-    "price": 2000
-  },
-  {
-    "num": "い-27",
-    "circle": "ぴゅあぴゅあ",
-    "type": "セット",
-    "item": "新刊セット",
-    "price": 2000
-  },
-  {
-    "num": "い-27",
-    "circle": "ぴゅあぴゅあ",
-    "type": "イラスト本",
-    "item": "新刊",
-    "price": 500
-  },
-  {
-    "num": "い-27",
-    "circle": "ぴゅあぴゅあ",
-    "type": "アクスタ",
-    "item": "アクリルスタンド (たきな)",
-    "price": 1000
-  },
-  {
-    "num": "い-27",
-    "circle": "ぴゅあぴゅあ",
-    "type": "アクスタ",
-    "item": "アクリルスタンド (千束)",
-    "price": 1000
-  },
-  {
-    "num": "い-27",
-    "circle": "ぴゅあぴゅあ",
-    "type": "イラスト本",
-    "item": "既刊 (BLUE ARCHIVE / アビドス)",
-    "price": 1000
-  },
-  {
-    "num": "い-27",
-    "circle": "ぴゅあぴゅあ",
-    "type": "セット",
-    "item": "既刊セット",
-    "price": 2000
-  },
-  {
-    "num": "い-27",
-    "circle": "ぴゅあぴゅあ",
-    "type": "イラスト本",
-    "item": "既刊 (BLUE ARCHIVE / 早瀬ユウカ)",
-    "price": 500
-  },
-  {
-    "num": "い-27",
-    "circle": "ぴゅあぴゅあ",
-    "type": "イラスト本",
-    "item": "既刊 (BLUE ARCHIVE / 聖園ミカ・桐藤ナギサ)",
-    "price": 500
+    "price": 2000,
+    "type": "アクスタ"
   }
 ]
