@@ -1190,39 +1190,39 @@
     "price": 800
   },
   {
-    "num": "G13-14",
+    "num": "G-13-14",
     "circle": "なつしお姉妹",
-    "type": "写真集",
     "item": "New 写真集「つならむきらきら」",
-    "price": 2000
+    "price": 2000,
+    "type": "写真集"
   },
   {
-    "num": "G13-14",
+    "num": "G-13-14",
     "circle": "なつしお姉妹",
-    "type": "その他",
     "item": "ランダムチェキ",
-    "price": 500
+    "price": 500,
+    "type": "その他"
   },
   {
-    "num": "G13-14",
+    "num": "G-13-14",
     "circle": "なつしお姉妹",
-    "type": "セット",
     "item": "ランダムチェキ Conplete Set",
-    "price": 3000
+    "price": 3000,
+    "type": "セット"
   },
   {
-    "num": "G13-14",
+    "num": "G-13-14",
     "circle": "なつしお姉妹",
-    "type": "その他",
     "item": "キャンバスプリント",
-    "price": 3000
+    "price": 3000,
+    "type": "その他"
   },
   {
-    "num": "G13-14",
+    "num": "G-13-14",
     "circle": "なつしお姉妹",
-    "type": "写真集",
     "item": "既刊「Sweetest Sisters」",
-    "price": 2000
+    "price": 2000,
+    "type": "写真集"
   },
   {
     "num": "D-20",
