@@ -7047,5 +7047,131 @@
     "type": "その他",
     "item": "チェキ風カード",
     "price": 300
+  },
+  {
+    "num": "I-12",
+    "circle": null,
+    "type": "アクスタ",
+    "item": "アクスタ",
+    "price": 700
+  },
+  {
+    "num": "I-12",
+    "circle": null,
+    "type": "その他",
+    "item": "箔押しチェキ",
+    "price": 300
+  },
+  {
+    "num": "I-12",
+    "circle": null,
+    "type": "アクキー",
+    "item": "アクキー",
+    "price": 500
+  },
+  {
+    "num": "I-12",
+    "circle": null,
+    "type": "その他",
+    "item": "キーキャップ",
+    "price": 500
+  },
+  {
+    "num": "I-12",
+    "circle": null,
+    "type": "その他",
+    "item": "シールセット1",
+    "price": 200
+  },
+  {
+    "num": "I-12",
+    "circle": null,
+    "type": "その他",
+    "item": "シールセット2",
+    "price": 200
+  },
+  {
+    "num": "I-12",
+    "circle": null,
+    "type": "セット",
+    "item": "紫宮るなフルセット",
+    "price": 2000
+  },
+  {
+    "num": "I-12",
+    "circle": null,
+    "type": "その他",
+    "item": "色紙あるかも",
+    "price": 500
+  },
+  {
+    "num": "I-12",
+    "circle": null,
+    "type": "その他",
+    "item": "名刺 (シュガちゃんのカーソルDLリンク付き)",
+    "price": 0
+  },
+  {
+    "num": "I-38",
+    "circle": "Ast'ris",
+    "type": "その他",
+    "item": "らむちプレイマット",
+    "price": 3000
+  },
+  {
+    "num": "I-38",
+    "circle": "Ast'ris",
+    "type": "その他",
+    "item": "めっさん ポストカード",
+    "price": 0
+  },
+  {
+    "num": "I-38",
+    "circle": "Ast'ris",
+    "type": "その他",
+    "item": "色紙",
+    "price": 1500
+  },
+  {
+    "num": "I15-16",
+    "circle": "記載なし",
+    "type": "アクスタ",
+    "item": "アクリルスタンド (100mm)",
+    "price": 1000
+  },
+  {
+    "num": "I-17-18",
+    "circle": "@ANRANNNNA",
+    "type": "アクスタ",
+    "item": "フレーム付アクスタ（全16種）",
+    "price": 2000
+  },
+  {
+    "num": "I-17-18",
+    "circle": "@ANRANNNNA",
+    "type": "セット",
+    "item": "るなちゃんセット",
+    "price": 2500
+  },
+  {
+    "num": "I-8",
+    "circle": "White Barley",
+    "type": "イラスト本",
+    "item": "ぶいすぽっ！らくがき本 vol.(仮)",
+    "price": 500
+  },
+  {
+    "num": "I-04",
+    "circle": "シェフKサキ",
+    "type": "その他",
+    "item": "ポストカード",
+    "price": 0
+  },
+  {
+    "num": "I-04",
+    "circle": "シェフKサキ",
+    "type": "イラスト本",
+    "item": "新刊イラスト本",
+    "price": 300
   }
 ]
