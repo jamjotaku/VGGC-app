@@ -6252,17 +6252,17 @@
   },
   {
     "num": "G-19",
-    "circle": "クロムフィルター",
-    "type": "イラスト本",
+    "circle": "フレッシュパイン缶",
     "item": "B6/フルカラー リソグラフ 本文 16P",
-    "price": 500
+    "price": 500,
+    "type": "イラスト本"
   },
   {
     "num": "G-19",
-    "circle": "クロムフィルター",
-    "type": "その他",
+    "circle": "フレッシュパイン缶",
     "item": "ステッカー",
-    "price": 100
+    "price": 100,
+    "type": "その他"
   },
   {
     "num": "G-20",
@@ -6279,67 +6279,67 @@
     "price": null
   },
   {
-    "num": "G-05.06",
+    "num": "G-05-06",
     "circle": "はげちゃった (HAGECHATTA)",
-    "type": "セット",
     "item": "Ⓐ 部屋着セット",
-    "price": 2500
+    "price": 2500,
+    "type": "セット"
   },
   {
-    "num": "G-05.06",
+    "num": "G-05-06",
     "circle": "はげちゃった (HAGECHATTA)",
-    "type": "セット",
     "item": "Ⓑ 新衣装セット",
-    "price": 2500
+    "price": 2500,
+    "type": "セット"
   },
   {
-    "num": "G-05.06",
+    "num": "G-05-06",
     "circle": "はげちゃった (HAGECHATTA)",
-    "type": "アクスタ",
     "item": "フレーム付きアクスタ",
-    "price": 2000
+    "price": 2000,
+    "type": "アクスタ"
   },
   {
-    "num": "G-05.06",
+    "num": "G-05-06",
     "circle": "はげちゃった (HAGECHATTA)",
-    "type": "その他",
     "item": "布ラバー製プレイマット",
-    "price": 3000
+    "price": 3000,
+    "type": "その他"
   },
   {
-    "num": "G-05.06",
+    "num": "G-05-06",
     "circle": "はげちゃった (HAGECHATTA)",
-    "type": "アクスタ",
     "item": "Tarakoアクスタ (委託)",
-    "price": 1500
+    "price": 1500,
+    "type": "アクスタ"
   },
   {
     "num": "G-23",
-    "circle": "リビルド",
-    "type": "アクスタ",
+    "circle": " レレルーム",
     "item": "ACRRYLIC FIGURE",
-    "price": 1500
+    "price": 1500,
+    "type": "アクスタ"
   },
   {
     "num": "G-23",
-    "circle": "リビルド",
-    "type": "セット",
+    "circle": "レレルーム",
     "item": "PHOTO CARD & COMPACT MIRROR SET",
-    "price": 1500
+    "price": 1500,
+    "type": "セット"
   },
   {
     "num": "G-23",
-    "circle": "リビルド",
-    "type": "セット",
+    "circle": "レレルーム",
     "item": "ACRRYLIC BLOCK & LIVE TICKET SET",
-    "price": 1000
+    "price": 1000,
+    "type": "セット"
   },
   {
     "num": "G-23",
-    "circle": "リビルド",
-    "type": "セット",
+    "circle": "レレルーム",
     "item": "POSTCARD SET",
-    "price": 500
+    "price": 500,
+    "type": "セット"
   },
   {
     "num": "G-11",
@@ -6454,18 +6454,18 @@
     "price": 3000
   },
   {
-    "num": "G21(-G22)",
+    "num": "G-21-22",
     "circle": "Underdog",
-    "type": "セット",
     "item": "SET",
-    "price": 1000
+    "price": 1000,
+    "type": "セット"
   },
   {
-    "num": "G21(-G22)",
+    "num": "G-21-22",
     "circle": "Underdog",
-    "type": "アクスタ",
     "item": "悪魔なくろむ アクリルスタンド",
-    "price": 2000
+    "price": 2000,
+    "type": "アクスタ"
   },
   {
     "num": "G-20",
@@ -6501,13 +6501,6 @@
     "type": "その他",
     "item": "フレークシールのみ",
     "price": 300
-  },
-  {
-    "num": "G-20",
-    "circle": "matoitto",
-    "type": "その他",
-    "item": "ポスカ",
-    "price": 0
   },
   {
     "num": "G-27",
