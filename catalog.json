@@ -5402,5 +5402,47 @@
     "item": "セーラー服ひなーのアクリルスタンド",
     "price": 2000,
     "type": "アクスタ"
+  },
+  {
+    "num": "D-04",
+    "circle": "mofmofloat",
+    "type": "イラスト本",
+    "item": "既刊 Chocolat au lait ～ Noah & Runa ～ / Bunny Bunny Bunny",
+    "price": 500
+  },
+  {
+    "num": "D-04",
+    "circle": "mofmofloat",
+    "type": "セット",
+    "item": "グッズセット",
+    "price": 2000
+  },
+  {
+    "num": "D-04",
+    "circle": "mofmofloat",
+    "type": "セット",
+    "item": "アクリルスタンド＆チェキセット",
+    "price": 1500
+  },
+  {
+    "num": "D-04",
+    "circle": "mofmofloat",
+    "type": "セット",
+    "item": "ポストカード＆アクリルキーホルダーセット",
+    "price": 700
+  },
+  {
+    "num": "D-04",
+    "circle": "mofmofloat",
+    "type": "アクキー",
+    "item": "アクリルキーホルダー",
+    "price": 500
+  },
+  {
+    "num": "D-04",
+    "circle": "mofmofloat",
+    "type": "その他",
+    "item": "クリアマルチケース（シュガちゃん・ロロ）",
+    "price": 1000
   }
 ]
