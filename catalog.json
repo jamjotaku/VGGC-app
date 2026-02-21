@@ -5020,73 +5020,66 @@
   },
   {
     "num": "C-07",
-    "circle": "Hang around",
-    "type": "写真集",
+    "circle": "2019",
     "item": "一ノ瀬うるはコスプレ写真集（新刊）",
-    "price": 1000
+    "price": 1000,
+    "type": "写真集"
   },
   {
-    "num": "K-19",
+    "num": "C-19",
     "circle": "WISTARIA",
-    "type": "セット",
     "item": "新刊5点セット",
-    "price": 2000
+    "price": 2000,
+    "type": "セット"
   },
   {
-    "num": "K-19",
+    "num": "C-19",
     "circle": "WISTARIA",
-    "type": "イラスト本",
     "item": "新刊「STAR LIGHT」",
-    "price": 1000
+    "price": 1000,
+    "type": "イラスト本"
   },
   {
-    "num": "K-19",
+    "num": "C-19",
     "circle": "WISTARIA",
-    "type": "アクスタ",
     "item": "小森めとアクリルスタンド",
-    "price": 1500
+    "price": 1500,
+    "type": "アクスタ"
   },
   {
-    "num": "C-01,02",
-    "circle": "もちもちもち",
-    "type": "セット",
-    "item": "SET 一ノ瀬うるは アクリルスタンド SET",
-    "price": 2500
+    "num": "C-01-02",
+    "circle": "もちもちももち",
+    "item": "一ノ瀬うるは アクリルスタンド SET",
+    "price": 2500,
+    "type": "セット"
   },
   {
-    "num": "C-01,02",
-    "circle": "もちもちもち",
-    "type": "セット",
-    "item": "SET 小森めと アクリルスタンド SET",
-    "price": 2500
+    "num": "C-01-02",
+    "circle": "もちもちももち",
+    "item": "小森めと アクリルスタンド SET",
+    "price": 2500,
+    "type": "セット"
   },
   {
-    "num": "C-01,02",
-    "circle": "もちもちもち",
-    "type": "セット",
+    "num": "C-01-02",
+    "circle": "もちもちももち",
     "item": "箔押しチェキSET",
-    "price": 500
+    "price": 500,
+    "type": "セット"
   },
   {
-    "num": "C-01,02",
-    "circle": "もちもちもち",
-    "type": "アクスタ",
+    "num": "C-01-02",
+    "circle": "もちもちももち",
     "item": "アクリルスタンド（各種）",
-    "price": 1500
+    "price": 1500,
+    "type": "アクスタ"
   },
   {
-    "num": "C-01,02",
-    "circle": "もちもちもち",
-    "type": "その他",
+    "num": "C-01-02",
+    "circle": "もちもちももち",
     "item": "めじるしアクセサリー（各種）（アクリル製）",
-    "price": 500
-  },
-  {
-    "num": "C-01,02",
-    "circle": "もちもちもち",
-    "type": "その他",
-    "item": "novelty Post card",
-    "price": 0
+    "price": 500,
+    "type": "その他"
   },
   {
     "num": "C-38",
@@ -5159,53 +5152,46 @@
     "price": 500
   },
   {
-    "num": "C-13,14",
+    "num": "C-13-14",
     "circle": "たす屋＋",
-    "type": "セット",
     "item": "BIG☆STARセット",
-    "price": 2500
+    "price": 2500,
+    "type": "セット"
   },
   {
-    "num": "C-13,14",
+    "num": "C-13-14",
     "circle": "たす屋＋",
-    "type": "その他",
     "item": "BIGヌードルすとっぱー（カップ麺ストッパー）",
-    "price": 1500
+    "price": 1500,
+    "type": "その他"
   },
   {
-    "num": "C-13,14",
+    "num": "C-13-14",
     "circle": "たす屋＋",
-    "type": "アクキー",
     "item": "ぷかぷか連結アクキー（のせ/ひなーの/べに）",
-    "price": 1500
+    "price": 1500,
+    "type": "アクキー"
   },
   {
-    "num": "C-13,14",
+    "num": "C-13-14",
     "circle": "たす屋＋",
-    "type": "セット",
     "item": "限定セット",
-    "price": 6000
+    "price": 6000,
+    "type": "セット"
   },
   {
-    "num": "C-13,14",
+    "num": "C-13-14",
     "circle": "たす屋＋",
-    "type": "その他",
     "item": "のせラバーキーホルダー",
-    "price": 1000
+    "price": 1000,
+    "type": "その他"
   },
   {
-    "num": "C-13,14",
+    "num": "C-13-14",
     "circle": "たす屋＋",
-    "type": "セット",
     "item": "ひなーのセット",
-    "price": 2500
-  },
-  {
-    "num": "C-13,14",
-    "circle": "たす屋＋",
-    "type": "その他",
-    "item": "色紙",
-    "price": null
+    "price": 2500,
+    "type": "セット"
   },
   {
     "num": "C-04",
@@ -5258,37 +5244,37 @@
   },
   {
     "num": "C-09-10",
-    "circle": "MATCHA LA TEI",
-    "type": "セット",
+    "circle": "抹茶ラ亭",
     "item": "新刊セット",
-    "price": 3000
+    "price": 3000,
+    "type": "セット"
   },
   {
     "num": "C-09-10",
-    "circle": "MATCHA LA TEI",
-    "type": "イラスト本",
+    "circle": "抹茶ラ亭",
     "item": "新刊「Labradorite」",
-    "price": 500
+    "price": 500,
+    "type": "イラスト本"
   },
   {
     "num": "C-09-10",
-    "circle": "MATCHA LA TEI",
-    "type": "アクスタ",
+    "circle": "抹茶ラ亭",
     "item": "BIG アクリルスタンド",
-    "price": 2500
+    "price": 2500,
+    "type": "アクスタ"
   },
   {
     "num": "C-09-10",
-    "circle": "MATCHA LA TEI",
-    "type": "その他",
+    "circle": "抹茶ラ亭",
     "item": "ラバーマット",
-    "price": 3000
+    "price": 3000,
+    "type": "その他"
   },
   {
     "num": "C-09-10",
-    "circle": "MATCHA LA TEI",
-    "type": "セット",
+    "circle": "抹茶ラ亭",
     "item": "アクリルマグネット 缶バッジセット",
-    "price": 1000
+    "price": 1000,
+    "type": "セット"
   }
 ]
