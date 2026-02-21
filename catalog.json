@@ -6951,53 +6951,46 @@
     "type": "イラスト本"
   },
   {
-    "num": "H19-20",
+    "num": "H-19-20",
     "circle": "whitemarble",
-    "type": "セット",
     "item": "合同セット",
-    "price": 4000
+    "price": 4000,
+    "type": "セット"
   },
   {
-    "num": "H19-20",
+    "num": "H-19-20",
     "circle": "whitemarble",
-    "type": "セット",
     "item": "sironaセット",
-    "price": 2500
+    "price": 2500,
+    "type": "セット"
   },
   {
-    "num": "H19-20",
+    "num": "H-19-20",
     "circle": "whitemarble",
-    "type": "セット",
     "item": "marbleセット",
-    "price": 2500
+    "price": 2500,
+    "type": "セット"
   },
   {
-    "num": "H19-20",
+    "num": "H-19-20",
     "circle": "whitemarble",
-    "type": "その他",
-    "item": "単品(追加) 色紙(marble)",
-    "price": 3000
+    "item": "色紙(marble)",
+    "price": 3000,
+    "type": "その他"
   },
   {
-    "num": "H19-20",
+    "num": "H-19-20",
     "circle": "whitemarble",
-    "type": "アクスタ",
     "item": "アクスタ",
-    "price": 1500
+    "price": 1500,
+    "type": "アクスタ"
   },
   {
-    "num": "H19-20",
+    "num": "H-19-20",
     "circle": "whitemarble",
-    "type": "その他",
     "item": "ポスカ",
-    "price": 100
-  },
-  {
-    "num": "H19-20",
-    "circle": "whitemarble",
-    "type": "イラスト本",
-    "item": "合同本",
-    "price": null
+    "price": 100,
+    "type": "その他"
   },
   {
     "num": "H-09",
