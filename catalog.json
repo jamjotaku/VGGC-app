@@ -5985,11 +5985,11 @@
     "type": "イラスト本"
   },
   {
-    "num": null,
-    "circle": "_tukineko299_",
-    "type": "セット",
+    "num": "F-01",
+    "circle": "猫のきまぐれ屋",
     "item": "新刊セット（アクリルプレート、イラスト本、チケット風カード 3種、キーキャップ 2種）",
-    "price": 3000
+    "price": 3000,
+    "type": "セット"
   },
   {
     "num": "F-38",
@@ -6025,13 +6025,6 @@
     "type": "セット",
     "item": "ステッカーセット",
     "price": 500
-  },
-  {
-    "num": "F-38",
-    "circle": "あんかけどん",
-    "type": "その他",
-    "item": "無配 チェキ風カード",
-    "price": 0
   },
   {
     "num": "F-27",
@@ -6098,24 +6091,24 @@
   },
   {
     "num": "F-05",
-    "circle": "tannkobu",
-    "type": "イラスト本",
+    "circle": "たんこぶ",
     "item": "新刊",
-    "price": 800
+    "price": 800,
+    "type": "イラスト本"
   },
   {
     "num": "F-05",
-    "circle": "tannkobu",
-    "type": "その他",
+    "circle": "たんこぶ",
     "item": "die-cut sticker",
-    "price": 300
+    "price": 300,
+    "type": "その他"
   },
   {
     "num": "F-05",
-    "circle": "tannkobu",
-    "type": "セット",
+    "circle": "たんこぶ",
     "item": "set (sticker 1種 ＋ 新刊 1冊)",
-    "price": 1000
+    "price": 1000,
+    "type": "セット"
   },
   {
     "num": "F-34",
@@ -6189,17 +6182,17 @@
   },
   {
     "num": "F-19",
-    "circle": "てぃるびっと",
-    "type": "アクスタ",
+    "circle": "てぃるみっと",
     "item": "空澄セナ・藍沢エマ アクリルスタンド",
-    "price": 1500
+    "price": 1500,
+    "type": "アクスタ"
   },
   {
     "num": "F-19",
-    "circle": "てぃるびっと",
-    "type": "その他",
+    "circle": "てぃるみっと",
     "item": "直筆色紙",
-    "price": 4000
+    "price": 4000,
+    "type": "その他"
   },
   {
     "num": "F-15",
@@ -6231,16 +6224,16 @@
   },
   {
     "num": "F-04",
-    "circle": "（画像内に記載なし）",
-    "type": "その他",
+    "circle": "わさびおいしい",
     "item": "めじるし",
-    "price": 500
+    "price": 500,
+    "type": "その他"
   },
   {
     "num": "F-04",
-    "circle": "（画像内に記載なし）",
-    "type": "セット",
+    "circle": "わさびおいしい",
     "item": "ステッカーセット",
-    "price": 500
+    "price": 500,
+    "type": "セット"
   }
 ]
